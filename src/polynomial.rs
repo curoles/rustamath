@@ -45,16 +45,42 @@ pub fn polynomial_5(x: f64, c: &[f64]) -> f64 {
 ///
 /// ```
 /// # use rustomath::polynomial::*;
-/// let c = [1.1, 2.2, 3.3, 4.4];
-/// let x = 1.0;
-/// assert_eq!(polynomial_n(3, x, &c), 11.0);
+/// let c = [1.1, 2.2, 0.0, 4.4];
+/// let x = 2.0;
+/// assert_eq!(sparse_polynomial_n(3, x, &c), (1.1 + 2.2*2.0 + 0.0 + 4.4*2.0*2.0*2.0));
 /// ```
-pub fn polynomial_n(n: usize, x: f64, c: &[f64]) -> f64 {
+pub fn sparse_polynomial_n(n: usize, x: f64, c: &[f64]) -> f64 {
     let mut xn: f64  = 1.0;
     let mut res = c[0];
     for i in 1..=n {
         xn *= x;
-        res += c[i] * xn;
+        if c[i] != 0.0 { res += c[i] * xn; }
+    }
+    res
+}
+
+/// Polynomial function of degree n calculated with Horner's method
+///
+/// # Example
+///
+/// ```
+/// # use rustomath::polynomial::*;
+/// let c = [1.1, 2.2, 3.3, 4.4];
+/// let x = 2.0;
+/// assert_eq!(polynomial_n(3, x, &c), (1.1 + 2.2*2.0 + 3.3*2.0*2.0 + 4.4*2.0*2.0*2.0));
+/// ```
+///
+/// ```
+/// # use rustomath::polynomial::*;
+/// # use assert_float_eq::*;
+/// let c = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6];
+/// let x = 0.12345678;
+/// assert_f64_near!(polynomial_5(x, &c), polynomial_n(5, x, &c));
+/// ```
+pub fn polynomial_n(n: usize, x: f64, c: &[f64]) -> f64 {
+    let mut res = c[n];
+    for i in (0..n).rev() {
+        res = res*x + c[i];
     }
     res
 }
@@ -99,17 +125,20 @@ mod tests {
     fn p3() {
         let c = [1.1, 2.2, 3.3, 4.4];
         let x = 0.12345678;
-        assert_eq!(polynomial_3(x, &c), polynomial_n(3, x, &c));
+        assert_eq!(polynomial_3(x, &c), sparse_polynomial_n(3, x, &c));
         assert_eq!(polynomial_3(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4));
+        assert_f64_near!(polynomial_3(x, &c), polynomial_n(3, x, &c));
     }
 
     #[test]
     fn p4_5() {
         let c = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6];
         let x = 0.12345678;
-        assert_eq!(polynomial_4(x, &c), polynomial_n(4, x, &c));
+        assert_eq!(polynomial_4(x, &c), sparse_polynomial_n(4, x, &c));
+        assert_f64_near!(polynomial_4(x, &c), polynomial_n(4, x, &c));
         assert_eq!(polynomial_4(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4, 5.5));
-        assert_eq!(polynomial_5(x, &c), polynomial_n(5, x, &c));
+        assert_eq!(polynomial_5(x, &c), sparse_polynomial_n(5, x, &c));
+        assert_f64_near!(polynomial_5(x, &c), polynomial_n(5, x, &c));
         assert_eq!(polynomial_5(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6));
     }
 }

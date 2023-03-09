@@ -2,6 +2,10 @@
 
 #![warn(missing_docs)]
 
+#[cfg(test)]
+#[macro_use]
+extern crate assert_float_eq;
+
 pub mod polynomial;
 
 /// i am foo
