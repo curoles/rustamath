@@ -59,6 +59,32 @@ pub fn polynomial_n(n: usize, x: f64, c: &[f64]) -> f64 {
     res
 }
 
+/// Polynomial function of variable degree
+///
+/// # Example
+///
+/// ```
+/// # use rustomath::polynomial::*;
+/// assert_eq!(polynomial!(2.1, 3.3, 4.4, 5.5), (3.3 + 4.4*2.1 + 5.5*2.1*2.1));
+/// ```
+#[macro_export]
+macro_rules! polynomial {
+    ( $x:expr, $( $c:expr ),* ) => {
+        {
+            let mut res: f64 = 0.0;
+            let mut _xn: f64 = 1.0;
+            $(
+                res += $c * _xn;
+                _xn *= $x;
+            )*
+            res
+        }
+    };
+}
+
+// this makes path: `use rastomath::polynomial::polynomial`
+pub use polynomial;
+
 #[cfg(test)]
 mod tests {
     use crate::polynomial::*;
@@ -66,6 +92,7 @@ mod tests {
     #[test]
     fn p2() {
         assert_eq!(polynomial_2(2.1, &[3.3, 1.0, 1.0]), (3.3 + 2.1 + 2.1*2.1));
+        assert_eq!(polynomial!(2.1, 3.3, 4.4, 5.5), (3.3 + 4.4*2.1 + 5.5*2.1*2.1));
     }
 
     #[test]
@@ -73,6 +100,7 @@ mod tests {
         let c = [1.1, 2.2, 3.3, 4.4];
         let x = 0.12345678;
         assert_eq!(polynomial_3(x, &c), polynomial_n(3, x, &c));
+        assert_eq!(polynomial_3(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4));
     }
 
     #[test]
@@ -80,6 +108,8 @@ mod tests {
         let c = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6];
         let x = 0.12345678;
         assert_eq!(polynomial_4(x, &c), polynomial_n(4, x, &c));
+        assert_eq!(polynomial_4(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4, 5.5));
         assert_eq!(polynomial_5(x, &c), polynomial_n(5, x, &c));
+        assert_eq!(polynomial_5(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6));
     }
 }
