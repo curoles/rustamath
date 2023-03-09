@@ -1,4 +1,4 @@
-.PHONY: build test doc
+.PHONY: build test doc bench
 
 # Default target
 build:
@@ -9,3 +9,6 @@ test:
 
 doc:
 	cargo doc
+
+bench:
+	cargo bench

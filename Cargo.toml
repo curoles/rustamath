@@ -7,3 +7,10 @@ edition = "2021"
 
 [dependencies]
 assert_float_eq = "1"
+
+[dev-dependencies]
+criterion = "0.4"
+
+[[bench]]
+name = "polynomial_benchmark"
+harness = false

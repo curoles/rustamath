@@ -5,5 +5,5 @@
 use rustomath::foo;
 
 fn main() {
-    println!("Hello, world! foo returns {}", foo());
+    println!("Hello, world! foo returns {}", foo(22));
 }
