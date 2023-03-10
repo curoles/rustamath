@@ -11,6 +11,14 @@ assert_float_eq = "1"
 [dev-dependencies]
 criterion = "0.4"
 
+[[bin]]
+path = "src/bin/polynomial.rs"
+name = "rustomath-polynomial"
+
+[[bin]]
+path = "src/bin/lottery.rs"
+name = "rustomath-lottery"
+
 [[bench]]
 name = "polynomial_benchmark"
 harness = false

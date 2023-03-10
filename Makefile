@@ -48,3 +48,11 @@ bench-polynomial:
 .PHONY: bench-foo
 bench-foo:
 	@cargo bench --bench foo_benchmark
+
+.PHONY: run-polynomial
+run-polynomial:
+	@cargo run --bin rustomath-polynomial
+
+.PHONY: run-lottery
+run-lottery:
+	@cargo run --bin rustomath-lottery
