@@ -56,6 +56,7 @@ pub fn polynomial_5(x: f64, c: &[f64]) -> f64 {
 pub fn naive_polynomial_n(n: usize, x: f64, c: &[f64]) -> f64 {
     let mut xn: f64  = 1.0;
     let mut res = c[0];
+    #[allow(clippy::needless_range_loop)]
     for i in 1..=n {
         xn *= x;
         res += c[i] * xn;

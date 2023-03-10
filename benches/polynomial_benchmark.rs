@@ -1,6 +1,8 @@
 use criterion::{criterion_group, criterion_main, Criterion, BenchmarkId};
 use rustomath::polynomial::{polynomial_n, naive_polynomial_n};
 
+// https://bheisler.github.io/criterion.rs/book/user_guide/comparing_functions.html
+//
 fn polynomial_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("Polynomial");
     let x: f64 = 123.4567;
