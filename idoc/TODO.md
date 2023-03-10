@@ -1,6 +1,5 @@
 
 
-- dir `doc` with mdBook
 - lottery mod random/lottery
   * from to
   * check x in range and unique
