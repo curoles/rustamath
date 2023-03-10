@@ -51,15 +51,15 @@ pub fn polynomial_5(x: f64, c: &[f64]) -> f64 {
 /// # use rustomath::polynomial::*;
 /// let c = [1.1, 2.2, 0.0, 4.4];
 /// let x = 2.0;
-/// assert_eq!(naive_polynomial_n(3, x, &c), (1.1 + 2.2*2.0 + 0.0 + 4.4*2.0*2.0*2.0));
+/// assert_eq!(naive_polynomial_n(x, &c), (1.1 + 2.2*2.0 + 0.0 + 4.4*2.0*2.0*2.0));
 /// ```
-pub fn naive_polynomial_n(n: usize, x: f64, c: &[f64]) -> f64 {
+pub fn naive_polynomial_n(x: f64, cs: &[f64]) -> f64 {
     let mut xn: f64  = 1.0;
-    let mut res = c[0];
-    #[allow(clippy::needless_range_loop)]
-    for i in 1..=n {
+    let mut res = cs[0];
+
+    for c in cs.iter().skip(1) {
         xn *= x;
-        res += c[i] * xn;
+        res += c * xn;
     }
     res
 }
@@ -75,7 +75,7 @@ pub fn naive_polynomial_n(n: usize, x: f64, c: &[f64]) -> f64 {
 /// # use rustomath::polynomial::*;
 /// let c = [1.1, 2.2, 3.3, 4.4];
 /// let x = 2.0;
-/// assert_eq!(polynomial_n(3, x, &c), (1.1 + 2.2*2.0 + 3.3*2.0*2.0 + 4.4*2.0*2.0*2.0));
+/// assert_eq!(polynomial_n(x, &c), (1.1 + 2.2*2.0 + 3.3*2.0*2.0 + 4.4*2.0*2.0*2.0));
 /// ```
 ///
 /// ```
@@ -83,12 +83,13 @@ pub fn naive_polynomial_n(n: usize, x: f64, c: &[f64]) -> f64 {
 /// # use assert_float_eq::*;
 /// let c = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6];
 /// let x = 0.12345678;
-/// assert_f64_near!(polynomial_5(x, &c), polynomial_n(5, x, &c));
+/// assert_f64_near!(polynomial_5(x, &c), polynomial_n(x, &c));
 /// ```
-pub fn polynomial_n(n: usize, x: f64, c: &[f64]) -> f64 {
-    let mut res = c[n];
-    for i in (0..n).rev() {
-        res = res*x + c[i];
+pub fn polynomial_n(x: f64, cs: &[f64]) -> f64 {
+    let mut res = cs[cs.len()-1];
+    //SLOW: for c in cs.iter().take(cs.len()-1).rev() {
+    for i in (0..cs.len()-1).rev() {
+        res = res*x + cs[i];
     }
     res
 }
@@ -133,20 +134,20 @@ mod tests {
     fn p3() {
         let c = [1.1, 2.2, 3.3, 4.4];
         let x = 0.12345678;
-        assert_eq!(polynomial_3(x, &c), naive_polynomial_n(3, x, &c));
+        assert_eq!(polynomial_3(x, &c), naive_polynomial_n(x, &c));
         assert_eq!(polynomial_3(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4));
-        assert_f64_near!(polynomial_3(x, &c), polynomial_n(3, x, &c));
+        assert_f64_near!(polynomial_3(x, &c), polynomial_n(x, &c));
     }
 
     #[test]
     fn p4_5() {
         let c = [1.1, 2.2, 3.3, 4.4, 5.5, 6.6];
         let x = 0.12345678;
-        assert_eq!(polynomial_4(x, &c), naive_polynomial_n(4, x, &c));
-        assert_f64_near!(polynomial_4(x, &c), polynomial_n(4, x, &c));
+        assert_eq!(polynomial_4(x, &c), naive_polynomial_n(x, &c[..5]));
+        assert_f64_near!(polynomial_4(x, &c), polynomial_n(x, &c[..5]));
         assert_eq!(polynomial_4(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4, 5.5));
-        assert_eq!(polynomial_5(x, &c), naive_polynomial_n(5, x, &c));
-        assert_f64_near!(polynomial_5(x, &c), polynomial_n(5, x, &c));
+        assert_eq!(polynomial_5(x, &c), naive_polynomial_n(x, &c));
+        assert_f64_near!(polynomial_5(x, &c), polynomial_n(x, &c));
         assert_eq!(polynomial_5(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6));
     }
 }

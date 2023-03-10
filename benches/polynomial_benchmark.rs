@@ -10,9 +10,9 @@ fn polynomial_benchmark(c: &mut Criterion) {
 
     for i in [20, 100, 500, 1000].iter() {
         group.bench_with_input(BenchmarkId::new("Naive", i), i,
-            |b, i| b.iter(|| naive_polynomial_n(*i, x, &c)));
+            |b, i| b.iter(|| naive_polynomial_n(x, &c[..*i+1])));
         group.bench_with_input(BenchmarkId::new("Horner", i), i,
-            |b, i| b.iter(|| polynomial_n(*i, x, &c)));
+            |b, i| b.iter(|| polynomial_n(x, &c[..*i+1])));
     }
     group.finish();
 }
