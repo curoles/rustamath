@@ -35,3 +35,11 @@ tree:
 	@echo
 	@echo "Directory tree:"
 	@tree -I target
+
+.PHONY: bench-polynomial
+bench-polynomial:
+	@cargo bench --bench polynomial_benchmark
+
+.PHONY: bench-foo
+bench-foo:
+	@cargo bench --bench foo_benchmark

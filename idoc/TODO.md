@@ -8,9 +8,8 @@
   * eval x
   * roots range
   * plot with https://crates.io/crates/plotters
-- more than 1 bench, add to make
 - workspace with crates:
   * rustomath
   * rustomath-tools
   * rustomath-doc
-  * rustomath-bench
+  * rustomath-benchmarks
