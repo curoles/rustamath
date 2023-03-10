@@ -6,6 +6,7 @@
 #[macro_use]
 extern crate assert_float_eq;
 
+pub mod simd;
 pub mod polynomial;
 pub mod random;
 

@@ -1,3 +1,7 @@
+
+RUSTFLAGS="-C target-cpu=native"
+
+
 .PHONY: build build-release build-production check test doc doc_book bench rust-update tree clean
 
 # Default target
