@@ -15,6 +15,11 @@
   * simd::vec::add
 - LA module
   * la::vec::norm
+- SIMD
+  * https://doc.rust-lang.org/core/simd/struct.Simd.html
+  * https://github.com/rust-lang/rust/issues/86656
+  * check https://github.com/AdamNiederer/faster
+  *use std::simd::Simd;
 - workspace with crates:
   * rustomath
   * rustomath-tools

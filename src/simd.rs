@@ -1,5 +1,7 @@
 //! Vector and matrix operations using SIMD instructions
 
+//use std::simd::Simd;
+
 pub mod noarch;
 
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
@@ -16,7 +18,9 @@ pub mod vec {
 
     /// add all elements of 2 vectors
     #[inline] pub fn add<T>(a: &mut[T], b: &[T])
-        where T: std::ops::Add<Output = T>, T: Copy
+        where T: std::ops::Add<Output = T>,
+              T: Copy,
+              //T: std::simd::SimdElement
     {
         #[cfg(simd_arch = "x86_avx2")]
         avx2::add(a, b);
