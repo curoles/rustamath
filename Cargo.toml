@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 assert_float_eq = "1"
+clap = { version = "4.1.8", features = ["derive"] }
 
 [dev-dependencies]
 criterion = "0.4"
