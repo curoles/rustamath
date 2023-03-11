@@ -14,8 +14,9 @@ struct Cli {
 enum Commands {
     /// Evaluate polynomial f(x)
     Eval(EvalArgs),
+    /// Plot polynomial f(x)
+    Plot(PlotArgs),
     //roots
-    //plot https://crates.io/crates/plotters
 }
 
 #[derive(Args)]
@@ -32,12 +33,29 @@ struct EvalArgs {
     verbose: bool,
 }
 
+#[derive(Args)]
+struct PlotArgs {
+    /// Start x
+    start: f64,
+
+    // FIXME TODO validate end > start
+    /// Start x
+    end: f64,
+
+    /// Coefficients c0, c1, c2...
+    #[arg(required = true)]
+    coeffs: Vec<f64>,
+}
+
 fn main() {
     let cli = Cli::parse();
 
     match &cli.command {
         Commands::Eval (args) => {
             eval(args.x, &args.coeffs, args.verbose)
+        }
+        Commands::Plot (args) => {
+            plot(&args.coeffs, args.start, args.end)
         }
     }
 
@@ -57,3 +75,7 @@ fn eval(x: f64, coeffs: &[f64], verbose: bool) {
     }
 }
 
+// https://crates.io/crates/plotters
+// https://docs.rs/plotters/latest/plotters/
+fn plot(_coeffs: &[f64], _x_start: f64, _x_end: f64) {
+}

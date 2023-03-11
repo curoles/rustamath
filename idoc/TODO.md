@@ -4,9 +4,9 @@
   * from to
   * check x in range and unique
 - polynomial tool
-  * eval x
-  * roots range
-  * plot with https://crates.io/crates/plotters
+  * [x] eval x
+  * [] roots range
+  * [] plot with https://crates.io/crates/plotters
 - polynomial find roots
 - SIMD module
   * https://doc.rust-lang.org/core/arch/index.html
