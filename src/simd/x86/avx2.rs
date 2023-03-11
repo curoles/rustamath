@@ -21,7 +21,7 @@ fn binary_op<T>(op: fn(T,T) -> T, az: &mut[T], bs: &[T])
 /// # use rustomath::simd;
 /// let mut az = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 /// let bs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-/// simd::x86_avx2::add(&mut az, &bs);
+/// simd::x86::avx2::add(&mut az, &bs);
 /// assert_eq!(az[5], 10);
 /// ```
 pub fn add<T>(az: &mut[T], bs: &[T])
