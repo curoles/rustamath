@@ -2,7 +2,7 @@
 
 #![warn(missing_docs)]
 
-use rustomath::foo;
+use rustamath::foo;
 
 fn main() {
     println!("Hello, world! foo returns {}", foo(22));

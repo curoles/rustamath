@@ -1,5 +1,5 @@
 [package]
-name = "rustomath"
+name = "rustamath"
 version = "0.1.0"
 edition = "2021"
 
@@ -13,11 +13,11 @@ criterion = "0.4"
 
 [[bin]]
 path = "src/bin/polynomial.rs"
-name = "rustomath-polynomial"
+name = "rustamath-polynomial"
 
 [[bin]]
 path = "src/bin/lottery.rs"
-name = "rustomath-lottery"
+name = "rustamath-lottery"
 
 [[bench]]
 name = "polynomial_benchmark"

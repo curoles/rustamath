@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion, BenchmarkId};
-use rustomath::polynomial::{polynomial_n, naive_polynomial_n};
+use rustamath::polynomial::{polynomial_n, naive_polynomial_n};
 
 // https://bheisler.github.io/criterion.rs/book/user_guide/comparing_functions.html
 //

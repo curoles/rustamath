@@ -1,1 +1,1 @@
-# rustomath
+# rustamath

@@ -5,7 +5,7 @@
 /// # Example
 ///
 /// ```
-/// # use rustomath::simd;
+/// # use rustamath::simd;
 /// let mut az = [1, 2, 3, 4, 5];
 /// let bs = [1, 2, 3, 4, 5];
 /// simd::noarch::add(&mut az, &bs);

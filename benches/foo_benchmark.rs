@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use rustomath::foo;
+use rustamath::foo;
 
 pub fn foo_benchmark(c: &mut Criterion) {
     c.bench_function("foo 20", |b| b.iter(|| foo(black_box(20))));

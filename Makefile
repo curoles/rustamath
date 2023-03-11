@@ -55,8 +55,8 @@ bench-foo:
 
 .PHONY: run-polynomial
 run-polynomial:
-	@cargo run --bin rustomath-polynomial
+	@cargo run --bin rustamath-polynomial
 
 .PHONY: run-lottery
 run-lottery:
-	@cargo run --bin rustomath-lottery
+	@cargo run --bin rustamath-lottery

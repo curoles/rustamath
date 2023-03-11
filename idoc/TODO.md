@@ -20,8 +20,3 @@
   * https://github.com/rust-lang/rust/issues/86656
   * check https://github.com/AdamNiederer/faster
   *use std::simd::Simd;
-- workspace with crates:
-  * rustomath
-  * rustomath-tools
-  * rustomath-doc
-  * rustomath-benchmarks
