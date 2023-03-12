@@ -27,6 +27,18 @@ pub mod vec {
         #[cfg(simd_arch = "x86_avx512")]
         avx512::add(a, b);
     }
+
+    /// a[i] -> a[i]^2
+    #[inline] pub fn pow2<T>(a: &mut[T])
+        where T: std::ops::Mul<Output = T>,
+              T: Copy,
+              //T: std::simd::SimdElement
+    {
+        #[cfg(simd_arch = "x86_avx2")]
+        avx2::pow2(a);
+        #[cfg(simd_arch = "x86_avx512")]
+        avx512::pow2(a);
+    }
 }
 
 #[cfg(test)]

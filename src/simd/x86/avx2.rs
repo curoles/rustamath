@@ -50,3 +50,18 @@ pub fn add<T>(az: &mut[T], bs: &[T])
     //TODO;
     //_mm256_add_epi64(...);
 }
+
+/// a[i] -> a[i]^2
+pub fn pow2<T>(az: &mut[T])
+   where T: std::ops::Mul<Output = T>,
+         T: Copy,
+         //T: std::simd::SimdElement
+{
+    // TODO: chunk->simd->simd*simd->store chunk
+    /*for i in 0..az.len() {
+        az[i] = az[i] * az[i];
+    }*/
+    for a in az {
+        *a = *a * *a;
+    }
+}
