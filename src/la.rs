@@ -43,9 +43,38 @@ pub trait Vector<T>
     /// Get vector size or length
     fn size(&self) -> usize;
 
+    /// Get value at position
+    fn get_at_row(&self, pos: usize) -> T;
+
     /// Norm of a vector `v` is the length or magnitute of the `v`.
     /// Formula `norm(v) = sqrt( sum(v[i]^2) )`
     fn norm(&self) -> T; //FIXME mul+add type
+}
+
+//enum TnsrOrderType
+//RowMajor
+//ColMajor
+//Sparse
+
+/// https://en.wikipedia.org/wiki/Row-_and_column-major_order
+pub struct TnsrOrder {
+    /// i,j,k -> index in storage vector
+    pub val_pos: fn(&Self, i: &[usize], sz: &[usize]) -> usize,
+}
+
+
+impl TnsrOrder {
+
+    //new(type, nr_dims)
+
+    /// i,j,k -> index in storage vector
+    #[inline] fn row_major_1d(&self, i: &[usize], _sz: &[usize]) -> usize {
+        i[0]
+    }
+
+    #[inline] fn row_major_2d(&self, i: &[usize], sz: &[usize]) -> usize {
+        i[1] + i[0]*sz[1]
+    }
 }
 
 /// N-dimentional Tensor structure
@@ -55,17 +84,13 @@ pub struct Tnsr<T>
     /// Data storage `Vec<T>`
     pub v: std::vec::Vec<T>,
     nr_dims: usize,
-    sizes: std::vec::Vec<usize>
+    sizes: std::vec::Vec<usize>,
+    order: TnsrOrder
 }
 
 impl<T> Tnsr<T>
     where T: float::Float
 {
-    // Make new Vector
-    //pub fn new_vec(size: usize) -> Self {
-    //    <Tnsr::<T> as Vector::<T>>::new(size)
-    //}
-
     /// Get raw std::vec::Vec vector ref
     pub fn raw(&self) -> &std::vec::Vec::<T> {
         &self.v
@@ -84,9 +109,10 @@ impl<T> Tensor<T> for Tnsr<T>
     /// Create new tensor
     fn new_tensor(sizes: &[usize]) -> Self {
         Tnsr {
-            v : Vec::<T>::with_capacity(sizes.iter().sum()),
+            v : simd::vec::new(sizes.iter().sum()),
             nr_dims : sizes.len(),
-            sizes: Vec::from(sizes)
+            sizes: Vec::from(sizes),
+            order: TnsrOrder { val_pos: TnsrOrder::row_major_2d, }//FIXME
         }
     }
 
@@ -116,9 +142,10 @@ impl<T> Matrix<T> for Tnsr<T>
     /// Create new matrix
     fn new_matrix(nr_rows: usize, nr_cols: usize) -> Self {
         Tnsr {
-            v : Vec::<T>::with_capacity(nr_rows*nr_cols),
+            v : simd::vec::new(nr_rows*nr_cols),
             nr_dims : 2,
-            sizes: vec![nr_rows, nr_cols]
+            sizes: vec![nr_rows, nr_cols],
+            order: TnsrOrder { val_pos: TnsrOrder::row_major_2d, }
         }
     }
 }
@@ -142,9 +169,10 @@ impl<T> Vector<T> for Tnsr<T>
     /// ```
     fn new_vector(size: usize) -> Self {
         let mut t = Tnsr {
-            v : Vec::<T>::with_capacity(size),
+            v : simd::vec::new(size),
             nr_dims : 1,
-            sizes: vec![size]
+            sizes: vec![size],
+            order: TnsrOrder { val_pos: TnsrOrder::row_major_1d, }
         };
         t.v.resize(size, T::neg_zero());
         t
@@ -155,9 +183,26 @@ impl<T> Vector<T> for Tnsr<T>
         self.sizes[0]
     }
 
+    /// Get value at position
+    fn get_at_row(&self, pos: usize) -> T {
+        self.v[ (self.order.val_pos)(&self.order, &[pos], &self.sizes) ]
+    }
+
     /// Norm of a vector `v` is the length or magnitute of the `v`.
+    ///
     /// Formula `norm(v) = sqrt( sum(v[i]^2) )`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rustamath::la::{Tnsr, Vector}; use assert_float_eq::*;
+    /// let mut t = Tnsr::<f64>::new_vector(3);
+    /// t.v = vec![1.1, 2.2, 3.3];
+    /// assert_f64_near!(t.norm(),
+    ///     f64::sqrt( vec![1.1, 2.2, 3.3].iter().fold(0.0, |acc,x| acc + x*x) ));
+    /// ```
     fn norm(&self) -> T {
+        //if dense
         simd::vec::norm(&self.v)
     }
 }

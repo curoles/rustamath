@@ -1,7 +1,7 @@
 use crate::la::*;
 
 #[test]
-fn new_vec() {
+fn vec_new() {
     let mut v = Tnsr::<f64>::new_vector(10);
     assert_eq!(v.raw().capacity(), 10);
     assert_eq!(v.raw().len(), 10);
@@ -24,4 +24,14 @@ fn new_vec() {
     assert_eq!(v.sizes(), &[2]);
     assert_eq!(v.dim(0), Some(2));
     assert_eq!(v.dim(1), None);
+}
+
+#[test]
+fn vec_get_at() {
+    let mut v = Tnsr::<f64>::new_vector(5);
+    v.v = vec![1.0, 2.0, 3.0, 4.0, 5.0];
+
+    assert_eq!(v.get_at_row(0), 1.0);
+    assert_eq!(v.get_at_row(1), 2.0);
+    assert_eq!(v.get_at_row(4), 5.0);
 }

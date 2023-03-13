@@ -18,6 +18,23 @@ pub mod vec {
     #[cfg(simd_arch = "x86_avx512")]
     use crate::simd::x86::avx512;
 
+    /// Create new SIMD aligned `Vec<T>`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rustamath::simd;
+    /// let t = simd::vec::new::<f64>(16);
+    /// #[cfg(any(simd_arch = "x86_avx2", simd_arch = "x86_avx512"))]
+    /// assert_eq!(t.as_ptr() as usize % 32, 0);
+    /// ```
+    pub fn new<T>(size: usize) -> Vec<T> {
+        #[cfg(simd_arch = "x86_avx2")]
+        return maligned::align_first::<T, maligned::A32>(size);
+        #[cfg(simd_arch = "x86_avx512")]
+        return maligned::align_first::<T, maligned::A64>(size);
+    }
+
     /// add all elements of 2 vectors
     #[inline] pub fn add<T>(a: &mut[T], b: &[T])
         where T: std::ops::Add<Output = T>,
