@@ -537,6 +537,7 @@ dependencies = [
  "assert_float_eq",
  "clap 4.1.8",
  "criterion",
+ "num-traits",
 ]
 
 [[package]]

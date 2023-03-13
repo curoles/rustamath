@@ -1,6 +1,8 @@
 //! Vector operations with AVX2 intrinsics
 
 use std::mem;
+use num_traits::float;
+
 //https://doc.rust-lang.org/core/simd/struct.Simd.html
 //https://github.com/rust-lang/rust/issues/86656
 //check https://github.com/AdamNiederer/faster
@@ -62,6 +64,24 @@ pub fn pow2<T>(az: &mut[T])
         az[i] = az[i] * az[i];
     }*/
     for a in az {
-        *a = *a * *a;
+        *a = (*a) * (*a);
     }
+}
+
+/// `sqrt( sum(a[i]^2) )`
+pub fn norm<T>(az: &[T]) -> T
+   where T: std::ops::Mul<Output = T>,
+         //T: std::ops::AddAssign,
+         T: float::Float,
+         //T: std::simd::SimdElement
+{
+    // TODO: chunk->simd->simd*simd->horiz sum
+    /*for i in 0..az.len() {
+        az[i] = az[i] * az[i];
+    }*/
+    let mut norm: T = T::neg_zero();
+    for a in az {
+        norm = norm + ((*a) * (*a));
+    }
+    norm.sqrt()
 }

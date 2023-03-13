@@ -10,6 +10,8 @@ pub mod x86;
 /// vector operations using SIMD instructions
 pub mod vec {
 
+    use num_traits::float;
+
     #[cfg(simd_arch = "x86_avx2")]
     use crate::simd::x86::avx2;
 
@@ -38,6 +40,20 @@ pub mod vec {
         avx2::pow2(a);
         #[cfg(simd_arch = "x86_avx512")]
         avx512::pow2(a);
+    }
+
+
+    /// `sqrt( sum(a[i]^2) )`
+    #[inline] pub fn norm<T>(a: &[T]) -> T
+        where T: std::ops::Mul<Output = T>,
+              //T: std::ops::AddAssign,
+              T: float::Float,
+              //T: std::simd::SimdElement
+    {
+        #[cfg(simd_arch = "x86_avx2")]
+        return avx2::norm(a);
+        #[cfg(simd_arch = "x86_avx512")]
+        return avx512::norm(a);
     }
 }
 
