@@ -28,10 +28,26 @@ fn vec_new() {
 
 #[test]
 fn vec_get_at() {
-    let mut v = Tnsr::<f64>::new_vector(5);
-    v.v = vec![1.0, 2.0, 3.0, 4.0, 5.0];
+    let mut t = Tnsr::<f64>::new_vector(5);
+    t.v = vec![1.0, 2.0, 3.0, 4.0, 5.0];
 
-    assert_eq!(v.get_at_row(0), 1.0);
-    assert_eq!(v.get_at_row(1), 2.0);
-    assert_eq!(v.get_at_row(4), 5.0);
+    // https://doc.rust-lang.org/book/ch19-03-advanced-traits.html#fully-qualified-syntax-for-disambiguation-calling-methods-with-the-same-name
+    assert_eq!(Vector::get(&t, 0), 1.0);
+    assert_eq!(Vector::get(&t, 1), 2.0);
+    assert_eq!(Vector::get(&t, 4), 5.0);
+
+    let v: &mut dyn Vector<f64> = &mut t;
+    assert_eq!(v.get(0), 1.0);
+    v.set(1, 2.2);
+    assert_eq!(v.get(1), 2.2);
+
+    let v = &mut t as &mut dyn Vector::<f64>;
+    assert_eq!(v.get(0), 1.0);
+    v.set(2, 3.3);
+    assert_eq!(v.get(2), 3.3);
+
+    let v = &mut Tnsr::<f64>::new_vector(5) as &mut dyn Vector::<f64>;
+    assert_eq!(v.get(1), 0.0);
+    v.set(1, 7.7);
+    assert_eq!(v.get(1), 7.7);
 }

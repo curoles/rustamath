@@ -11,9 +11,6 @@ mod tests;
 pub trait Tensor<T>
     where T: float::Float
 {
-    /// Create new tensor
-    fn new_tensor(sizes: &[usize]) -> Self;
-
     /// Get numbers of dimensions
     fn nr_dims(&self) -> usize;
 
@@ -28,23 +25,22 @@ pub trait Tensor<T>
 pub trait Matrix<T>
     where T: float::Float
 {
-
-    /// Create new matrix
-    fn new_matrix(nr_rows: usize, nr_cols: usize) -> Self;
+    /// Get value at (row,col)
+    fn get(&self, row: usize, col: usize) -> T;
 }
 
 /// Vector as 1D Tensor
 pub trait Vector<T>
     where T: float::Float
 {
-    /// Create new vector
-    fn new_vector(size: usize) -> Self;
-
     /// Get vector size or length
     fn size(&self) -> usize;
 
     /// Get value at position
-    fn get_at_row(&self, pos: usize) -> T;
+    fn get(&self, pos: usize) -> T;
+
+    /// Set value at position
+    fn set(&mut self, pos: usize, val: T);
 
     /// Norm of a vector `v` is the length or magnitute of the `v`.
     /// Formula `norm(v) = sqrt( sum(v[i]^2) )`
@@ -91,6 +87,49 @@ pub struct Tnsr<T>
 impl<T> Tnsr<T>
     where T: float::Float
 {
+    /// Create new vector
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rustamath::la::{Tnsr, Vector};
+    /// let t = Tnsr::<f64>::new_vector(10);
+    /// assert_eq!(t.raw().len(), 10);
+    /// assert_eq!(t.v.len(), 10);
+    /// let v = &t as &dyn Vector::<f64>;
+    /// assert_eq!(v.size(), 10);
+    /// ```
+    pub fn new_vector(size: usize) -> Self {
+        let mut t = Tnsr {
+            v : simd::vec::new(size),
+            nr_dims : 1,
+            sizes: vec![size],
+            order: TnsrOrder { val_pos: TnsrOrder::row_major_1d, }
+        };
+        t.v.resize(size, T::neg_zero());
+        t
+    }
+
+    /// Create new matrix
+    pub fn new_matrix(nr_rows: usize, nr_cols: usize) -> Self {
+        Tnsr {
+            v : simd::vec::new(nr_rows*nr_cols),
+            nr_dims : 2,
+            sizes: vec![nr_rows, nr_cols],
+            order: TnsrOrder { val_pos: TnsrOrder::row_major_2d, }
+        }
+    }
+
+    /// Create new tensor
+    pub fn new_tensor(sizes: &[usize]) -> Self {
+        Tnsr {
+            v : simd::vec::new(sizes.iter().sum()),
+            nr_dims : sizes.len(),
+            sizes: Vec::from(sizes),
+            order: TnsrOrder { val_pos: TnsrOrder::row_major_2d, }//FIXME
+        }
+    }
+
     /// Get raw std::vec::Vec vector ref
     pub fn raw(&self) -> &std::vec::Vec::<T> {
         &self.v
@@ -105,17 +144,6 @@ impl<T> Tnsr<T>
 impl<T> Tensor<T> for Tnsr<T>
     where T: float::Float
 {
-
-    /// Create new tensor
-    fn new_tensor(sizes: &[usize]) -> Self {
-        Tnsr {
-            v : simd::vec::new(sizes.iter().sum()),
-            nr_dims : sizes.len(),
-            sizes: Vec::from(sizes),
-            order: TnsrOrder { val_pos: TnsrOrder::row_major_2d, }//FIXME
-        }
-    }
-
     /// Get numbers of dimensions
     fn nr_dims(&self) -> usize {
         self.nr_dims
@@ -138,54 +166,28 @@ impl<T> Tensor<T> for Tnsr<T>
 impl<T> Matrix<T> for Tnsr<T>
     where T: float::Float
 {
-
-    /// Create new matrix
-    fn new_matrix(nr_rows: usize, nr_cols: usize) -> Self {
-        Tnsr {
-            v : simd::vec::new(nr_rows*nr_cols),
-            nr_dims : 2,
-            sizes: vec![nr_rows, nr_cols],
-            order: TnsrOrder { val_pos: TnsrOrder::row_major_2d, }
-        }
+    /// Get value at (row,col)
+    fn get(&self, row: usize, col: usize) -> T {
+        self.v[ (self.order.val_pos)(&self.order, &[row, col], &self.sizes) ]
     }
 }
 
 impl<T> Vector<T> for Tnsr<T>
     where T: float::Float
 {
-
-    /// Create new vector
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use rustamath::la::{Tnsr, Vector};
-    /// let t = Tnsr::<f64>::new_vector(10);
-    /// assert_eq!(t.raw().len(), 10);
-    /// assert_eq!(t.v.len(), 10);
-    /// // Create as new trait type Vector<f32>
-    /// let t = <Tnsr::<f32> as Vector::<f32>>::new_vector(3);
-    /// assert_eq!(t.size(), 3);
-    /// ```
-    fn new_vector(size: usize) -> Self {
-        let mut t = Tnsr {
-            v : simd::vec::new(size),
-            nr_dims : 1,
-            sizes: vec![size],
-            order: TnsrOrder { val_pos: TnsrOrder::row_major_1d, }
-        };
-        t.v.resize(size, T::neg_zero());
-        t
-    }
-
     /// Get vector size or length
     fn size(&self) -> usize {
         self.sizes[0]
     }
 
     /// Get value at position
-    fn get_at_row(&self, pos: usize) -> T {
+    fn get(&self, pos: usize) -> T {
         self.v[ (self.order.val_pos)(&self.order, &[pos], &self.sizes) ]
+    }
+
+    /// Set value at position
+    fn set(&mut self, pos: usize, val: T)  {
+        self.v[ (self.order.val_pos)(&self.order, &[pos], &self.sizes) ] = val;
     }
 
     /// Norm of a vector `v` is the length or magnitute of the `v`.
