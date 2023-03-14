@@ -63,6 +63,16 @@ impl<T> Tnsr<T>
         }
     }
 
+    /* perhaps SparseTnsr struct; Create new sparse matrix
+    pub fn new_sparse_matrix(nr_rows: usize, nr_cols: usize) -> Self {
+        Tnsr {
+            v : Vec::new(),
+            nr_dims : 2,
+            sizes: vec![nr_rows, nr_cols],
+            order: TnsrOrder::new(TnsrOrderType::SparseHash, 2),
+        }
+    }*/
+
     /// Create new tensor
     pub fn new_tensor(sizes: &[usize]) -> Self {
         Tnsr {
@@ -110,6 +120,7 @@ impl<T> Matrix<T> for Tnsr<T>
     where T: float::Float
 {
     /// Get value at (row,col)
+    /// FIXME TODO check bounds and return Option
     fn get(&self, row: usize, col: usize) -> T {
         self.v[ (self.order.val_pos)(&self.order, &[row, col], &self.sizes) ]
     }

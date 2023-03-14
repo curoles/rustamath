@@ -47,7 +47,7 @@ pub mod vec {
         avx512::add(a, b);
     }
 
-    /// a[i] -> a[i]^2
+    /// Function `a[i] -> a[i]^2`
     #[inline] pub fn pow2<T>(a: &mut[T])
         where T: std::ops::Mul<Output = T>,
               T: Copy,

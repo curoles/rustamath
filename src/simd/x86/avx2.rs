@@ -53,7 +53,7 @@ pub fn add<T>(az: &mut[T], bs: &[T])
     //_mm256_add_epi64(...);
 }
 
-/// a[i] -> a[i]^2
+/// Operation `a[i] -> a[i]^2`
 pub fn pow2<T>(az: &mut[T])
    where T: std::ops::Mul<Output = T>,
          T: Copy,
@@ -68,7 +68,7 @@ pub fn pow2<T>(az: &mut[T])
     }
 }
 
-/// `sqrt( sum(a[i]^2) )`
+/// Operation `sqrt( sum(a[i]^2) )`
 pub fn norm<T>(az: &[T]) -> T
    where T: std::ops::Mul<Output = T>,
          //T: std::ops::AddAssign,

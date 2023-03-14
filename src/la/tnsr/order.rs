@@ -2,7 +2,7 @@
 
 /// Tensor internal index-to-value mapping order type
 ///
-/// https://en.wikipedia.org/wiki/Row-_and_column-major_order
+/// <https://en.wikipedia.org/wiki/Row-_and_column-major_order>
 ///
 pub enum TnsrOrderType {
     /// Dense with row-major
@@ -70,8 +70,14 @@ impl TnsrOrder {
         i[1] + i[0]*sz[1]
     }
 
+    /// `iₖ + Sₖ·(iₖ₋₁ + Sₖ₋₁·(iₖ₋₂ + Sₖ₋₂·( ... + S₁i₀`
+    /// see <https://en.wikipedia.org/wiki/Row-_and_column-major_order>
     fn row_major_nd(&self, i: &[usize], sz: &[usize]) -> usize {
-        i[1] + i[0]*sz[1]
+        let mut n = i[0];
+        for j in 1..i.len() {
+            n = (n * sz[j]) + i[j]
+        }
+        n
     }
 
     #[inline] fn col_major_1d(&self, i: &[usize], _sz: &[usize]) -> usize {
@@ -79,10 +85,14 @@ impl TnsrOrder {
     }
 
     #[inline] fn col_major_2d(&self, i: &[usize], sz: &[usize]) -> usize {
-        i[1] + i[0]*sz[1]
+        i[0] + i[1]*sz[0]
     }
 
     fn col_major_nd(&self, i: &[usize], sz: &[usize]) -> usize {
-        i[1] + i[0]*sz[1]
+        let mut n = i[i.len() - 1];
+        for j in (0..i.len()-1).rev() {
+            n = (n * sz[j]) + i[j]
+        }
+        n
     }
 }

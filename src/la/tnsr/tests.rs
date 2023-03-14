@@ -51,3 +51,18 @@ fn vec_get_at() {
     v.set(1, 7.7);
     assert_eq!(v.get(1), 7.7);
 }
+
+#[test]
+fn matrix_new() {
+    let mut t = Tnsr::<f64>::new_matrix(3, 4);
+    t.v = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0];
+
+    let m: &mut dyn Matrix<f64> = &mut t;
+    assert_eq!(m.get(0,0), 1.0);
+    assert_eq!(m.get(0,1), 2.0);
+    assert_eq!(m.get(0,2), 3.0);
+    assert_eq!(m.get(0,3), 4.0);
+    assert_eq!(m.get(1,0), 5.0);
+    assert_eq!(m.get(1,1), 6.0);
+    assert_eq!(m.get(1,3), 8.0);
+}
