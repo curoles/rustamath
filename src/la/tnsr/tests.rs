@@ -1,4 +1,4 @@
-use crate::la::*;
+use crate::la::tnsr::*;
 
 #[test]
 fn vec_new() {
