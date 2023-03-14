@@ -44,31 +44,92 @@ pub trait Vector<T>
 
     /// Norm of a vector `v` is the length or magnitute of the `v`.
     /// Formula `norm(v) = sqrt( sum(v[i]^2) )`
-    fn norm(&self) -> T; //FIXME mul+add type
+    fn norm(&self) -> T;
 }
 
-//enum TnsrOrderType
-//RowMajor
-//ColMajor
-//Sparse
-
+/// Tensor internal index to value mapping order
+///
 /// https://en.wikipedia.org/wiki/Row-_and_column-major_order
+///
+pub enum TnsrOrderType {
+    /// Dense with row-major
+    RowMajor,
+    /// Dense with column-major
+    ColMajor,
+    /// Sparse Hash(index -> value)
+    SparseHash,
+}
+
+/// Control tensor's internal order
+///
 pub struct TnsrOrder {
-    /// i,j,k -> index in storage vector
+    /// Internal order type
+    pub kind: TnsrOrderType,
+    /// Dense vs sparse
+    pub is_sparse: bool,
+
+    /// Function pointer `(i,j,k) -> index` in storage vector
     pub val_pos: fn(&Self, i: &[usize], sz: &[usize]) -> usize,
 }
 
 
 impl TnsrOrder {
 
-    //new(type, nr_dims)
+    /// Create new Order with type and dimensions
+    ///
+    pub fn new(kind: TnsrOrderType, nr_dims: usize) -> Self {
+        match kind {
+            TnsrOrderType::RowMajor => TnsrOrder {
+                kind,
+                is_sparse: false,
+                val_pos: match nr_dims {
+                    1 => TnsrOrder::row_major_1d,
+                    2 => TnsrOrder::row_major_2d,
+                    _ => TnsrOrder::row_major_nd,
+                }
+            },
+            TnsrOrderType::ColMajor => TnsrOrder {
+                kind,
+                is_sparse: false,
+                val_pos: match nr_dims {
+                    1 => TnsrOrder::col_major_1d,
+                    2 => TnsrOrder::col_major_2d,
+                    _ => TnsrOrder::col_major_nd,
+                }
+            },
+            TnsrOrderType::SparseHash => TnsrOrder {
+                kind,
+                is_sparse: true,
+                val_pos: match nr_dims {
+                    1 => TnsrOrder::row_major_1d,//FIXME
+                    2 => TnsrOrder::row_major_2d,
+                    _ => TnsrOrder::row_major_nd,
+                }
+            },
+        }
+    }
 
-    /// i,j,k -> index in storage vector
     #[inline] fn row_major_1d(&self, i: &[usize], _sz: &[usize]) -> usize {
         i[0]
     }
 
     #[inline] fn row_major_2d(&self, i: &[usize], sz: &[usize]) -> usize {
+        i[1] + i[0]*sz[1]
+    }
+
+    fn row_major_nd(&self, i: &[usize], sz: &[usize]) -> usize {
+        i[1] + i[0]*sz[1]
+    }
+
+    #[inline] fn col_major_1d(&self, i: &[usize], _sz: &[usize]) -> usize {
+        i[0]
+    }
+
+    #[inline] fn col_major_2d(&self, i: &[usize], sz: &[usize]) -> usize {
+        i[1] + i[0]*sz[1]
+    }
+
+    fn col_major_nd(&self, i: &[usize], sz: &[usize]) -> usize {
         i[1] + i[0]*sz[1]
     }
 }
@@ -104,7 +165,7 @@ impl<T> Tnsr<T>
             v : simd::vec::new(size),
             nr_dims : 1,
             sizes: vec![size],
-            order: TnsrOrder { val_pos: TnsrOrder::row_major_1d, }
+            order: TnsrOrder::new(TnsrOrderType::RowMajor, 1),
         };
         t.v.resize(size, T::neg_zero());
         t
@@ -116,7 +177,7 @@ impl<T> Tnsr<T>
             v : simd::vec::new(nr_rows*nr_cols),
             nr_dims : 2,
             sizes: vec![nr_rows, nr_cols],
-            order: TnsrOrder { val_pos: TnsrOrder::row_major_2d, }
+            order: TnsrOrder::new(TnsrOrderType::RowMajor, 2),
         }
     }
 
@@ -126,7 +187,7 @@ impl<T> Tnsr<T>
             v : simd::vec::new(sizes.iter().sum()),
             nr_dims : sizes.len(),
             sizes: Vec::from(sizes),
-            order: TnsrOrder { val_pos: TnsrOrder::row_major_2d, }//FIXME
+            order: TnsrOrder::new(TnsrOrderType::RowMajor, sizes.len()),
         }
     }
 
