@@ -1,8 +1,6 @@
 
 
-- lottery mod random/lottery
-  * from to
-  * check x in range and unique
+
 - polynomial tool
   * [x] eval x
   * [] roots range

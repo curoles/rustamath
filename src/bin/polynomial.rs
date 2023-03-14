@@ -58,7 +58,6 @@ fn main() {
             plot(&args.coeffs, args.start, args.end)
         }
     }
-
 }
 
 fn eval(x: f64, coeffs: &[f64], verbose: bool) {

@@ -9,8 +9,9 @@ edition = "2021"
 rand = "0.8"
 num-traits = { version = "0.2", default-features = true}
 assert_float_eq = "1"
-clap = { version = "4.1.8", features = ["derive"] }
 maligned = "0.2.1"
+clap = { version = "4.1.8", features = ["derive"] }
+inquire = "0.6"
 #plotters = "0.3.1"
 
 [dev-dependencies]
