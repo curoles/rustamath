@@ -4,135 +4,17 @@
 use num_traits::float;
 use crate::simd;
 
+mod order;
+pub use self::order::{TnsrOrderType, TnsrOrder};
+mod trait_tensor;
+pub use self::trait_tensor::{Tensor};
+mod trait_matrix;
+pub use self::trait_matrix::{Matrix};
+mod trait_vector;
+pub use self::trait_vector::{Vector};
+
 #[cfg(test)]
 mod tests;
-
-/// N-dimentional Tensor
-pub trait Tensor<T>
-    where T: float::Float
-{
-    /// Get numbers of dimensions
-    fn nr_dims(&self) -> usize;
-
-    /// Get size for each dimension
-    fn sizes(&self) -> &[usize];
-
-    /// Get size for a dimension
-    fn dim(&self, dim_index: usize) -> Option<usize>;
-}
-
-/// Matrix as 2D Tensor
-pub trait Matrix<T>
-    where T: float::Float
-{
-    /// Get value at (row,col)
-    fn get(&self, row: usize, col: usize) -> T;
-}
-
-/// Vector as 1D Tensor
-pub trait Vector<T>
-    where T: float::Float
-{
-    /// Get vector size or length
-    fn size(&self) -> usize;
-
-    /// Get value at position
-    fn get(&self, pos: usize) -> T;
-
-    /// Set value at position
-    fn set(&mut self, pos: usize, val: T);
-
-    /// Norm of a vector `v` is the length or magnitute of the `v`.
-    /// Formula `norm(v) = sqrt( sum(v[i]^2) )`
-    fn norm(&self) -> T;
-}
-
-/// Tensor internal index to value mapping order
-///
-/// https://en.wikipedia.org/wiki/Row-_and_column-major_order
-///
-pub enum TnsrOrderType {
-    /// Dense with row-major
-    RowMajor,
-    /// Dense with column-major
-    ColMajor,
-    /// Sparse Hash(index -> value)
-    SparseHash,
-}
-
-/// Control tensor's internal order
-///
-pub struct TnsrOrder {
-    /// Internal order type
-    pub kind: TnsrOrderType,
-    /// Dense vs sparse
-    pub is_sparse: bool,
-
-    /// Function pointer `(i,j,k) -> index` in storage vector
-    pub val_pos: fn(&Self, i: &[usize], sz: &[usize]) -> usize,
-}
-
-
-impl TnsrOrder {
-
-    /// Create new Order with type and dimensions
-    ///
-    pub fn new(kind: TnsrOrderType, nr_dims: usize) -> Self {
-        match kind {
-            TnsrOrderType::RowMajor => TnsrOrder {
-                kind,
-                is_sparse: false,
-                val_pos: match nr_dims {
-                    1 => TnsrOrder::row_major_1d,
-                    2 => TnsrOrder::row_major_2d,
-                    _ => TnsrOrder::row_major_nd,
-                }
-            },
-            TnsrOrderType::ColMajor => TnsrOrder {
-                kind,
-                is_sparse: false,
-                val_pos: match nr_dims {
-                    1 => TnsrOrder::col_major_1d,
-                    2 => TnsrOrder::col_major_2d,
-                    _ => TnsrOrder::col_major_nd,
-                }
-            },
-            TnsrOrderType::SparseHash => TnsrOrder {
-                kind,
-                is_sparse: true,
-                val_pos: match nr_dims {
-                    1 => TnsrOrder::row_major_1d,//FIXME
-                    2 => TnsrOrder::row_major_2d,
-                    _ => TnsrOrder::row_major_nd,
-                }
-            },
-        }
-    }
-
-    #[inline] fn row_major_1d(&self, i: &[usize], _sz: &[usize]) -> usize {
-        i[0]
-    }
-
-    #[inline] fn row_major_2d(&self, i: &[usize], sz: &[usize]) -> usize {
-        i[1] + i[0]*sz[1]
-    }
-
-    fn row_major_nd(&self, i: &[usize], sz: &[usize]) -> usize {
-        i[1] + i[0]*sz[1]
-    }
-
-    #[inline] fn col_major_1d(&self, i: &[usize], _sz: &[usize]) -> usize {
-        i[0]
-    }
-
-    #[inline] fn col_major_2d(&self, i: &[usize], sz: &[usize]) -> usize {
-        i[1] + i[0]*sz[1]
-    }
-
-    fn col_major_nd(&self, i: &[usize], sz: &[usize]) -> usize {
-        i[1] + i[0]*sz[1]
-    }
-}
 
 /// N-dimentional Tensor structure
 pub struct Tnsr<T>
