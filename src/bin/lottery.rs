@@ -91,10 +91,7 @@ fn play(low: u32, high: u32, take: usize) {
 
     println!("{:?}", &list[..take]);
 
-    let high_clone = high;
-    let low_clone = low;
-
-    let validator = move |input: &u32| if *input > high_clone || *input < low_clone {
+    let validator = move |input: &u32| if *input > high || *input < low {
         Ok(Validation::Invalid("Illegal number".into()))
     } else {
         Ok(Validation::Valid)

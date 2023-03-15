@@ -29,3 +29,10 @@
   * https://github.com/rust-lang/rust/issues/86656
   * check https://github.com/AdamNiederer/faster
   * use std::simd::Simd;
+- check TestU01
+  * https://github.com/umontreal-simul/TestU01-2009/
+  * http://simul.iro.umontreal.ca/testu01/guideshorttestu01.pdf
+  * https://webhome.phy.duke.edu/~rgb/General/dieharder.php
+  * https://csrc.nist.gov/projects/random-bit-generation/
+- misc
+  * https://github.com/caisah/Sedgewick-algorithms-in-c-exercises-and-examples
