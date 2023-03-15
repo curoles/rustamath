@@ -89,7 +89,7 @@ fn play(low: u32, high: u32, take: usize) {
         _ => if take > len {len} else {take},
     };
 
-    println!("{:?}", &list[..take]);
+    //println!("{:?}", &list[..take]);
 
     let validator = move |input: &u32| if *input > high || *input < low {
         Ok(Validation::Invalid("Illegal number".into()))

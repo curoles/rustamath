@@ -35,11 +35,17 @@ struct EvalArgs {
 
 #[derive(Args)]
 struct PlotArgs {
-    /// Start x
+    /// Plot name w/o extention
+    #[arg(short, long)]
+    file_name: String,
+
+    /// Start 
+    #[arg(short, long)]
     start: f64,
 
     // FIXME TODO validate end > start
-    /// Start x
+    /// End x
+    #[arg(short, long)]
     end: f64,
 
     /// Coefficients c0, c1, c2...
@@ -55,7 +61,9 @@ fn main() {
             eval(args.x, &args.coeffs, args.verbose)
         }
         Commands::Plot (args) => {
-            plot(&args.coeffs, args.start, args.end)
+            if let Err(err) = plot(&args.coeffs, args.start, args.end, &args.file_name) {
+                println!("Error {}", err);
+            }
         }
     }
 }
@@ -74,7 +82,64 @@ fn eval(x: f64, coeffs: &[f64], verbose: bool) {
     }
 }
 
+fn print_formula(coeffs: &[f64]) -> String {
+    let mut s = String::new();
+    for (i,c) in coeffs.iter().enumerate() {
+        s.push_str(&format!("{c}*x^{i}", c=c, i=i));
+        if i < (coeffs.len() - 1) {
+            s.push_str(&format!(" + "));
+        }
+    }
+    s
+}
+
+use plotters::prelude::*;
+
 // https://crates.io/crates/plotters
 // https://docs.rs/plotters/latest/plotters/
-fn plot(_coeffs: &[f64], _x_start: f64, _x_end: f64) {
+// `rustamath-polynomial plot -f ../plot -s=-10 -e 10 -- 8 1 1 -1`
+fn plot(coeffs: &[f64], x_start: f64, x_end: f64, file_name: &String)
+-> Result<(), Box<dyn std::error::Error>>
+{
+    let file_name = String::from(file_name) + ".svg";
+    println!("Saving to file {}", file_name);
+    let backend = SVGBackend::new(
+        &file_name,
+        (800, 800)).into_drawing_area();
+
+    backend.fill(&WHITE)?;
+
+    let xs: _ = (0..=100)
+        .map(|x| x_start + (x as f64)*(x_end - x_start)/100.0)
+        .map(|x| (x, polynomial_n(x, coeffs)))
+        .collect::<Vec<(f64,f64)>>();
+    let y_start = xs.iter().fold(f64::INFINITY, |a, (_x,y)| a.min(*y));
+    let y_end = xs.iter().fold(f64::NEG_INFINITY, |a, (_x,y)| a.max(*y));
+
+    println!("ranges x:[{} .. {}] y:[{} .. {}]", x_start, x_end, y_start, y_end);
+
+    let mut chart = ChartBuilder::on(&backend)
+        .caption(print_formula(coeffs), ("sans-serif", 40).into_font())
+        .margin(5)
+        .x_label_area_size(30)
+        .y_label_area_size(40)
+        .build_cartesian_2d(x_start..x_end, y_start..y_end)?;
+
+    chart.configure_mesh().draw()?;
+
+    chart
+        .draw_series(LineSeries::new(
+            xs,
+            &RED,
+        ))?
+        .label("y = f(x)")
+        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
+
+    chart
+        .configure_series_labels()
+        .background_style(&WHITE.mix(0.8))
+        .border_style(&BLACK)
+        .draw()?;
+
+    Ok(())
 }
