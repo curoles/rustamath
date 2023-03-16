@@ -2,7 +2,7 @@
 RUSTFLAGS="-C target-cpu=native"
 
 
-.PHONY: build build-release build-production check test doc doc_book bench rust-update tree clean
+.PHONY: build build-release build-production check test doc doc-book bench rust-update tree clean
 
 # Default target
 build:
@@ -31,6 +31,7 @@ doc:
 doc-book:
 	@mdbook clean --dest-dir=target/doc_book doc_book
 	@mdbook build --dest-dir ../target/doc_book doc_book
+	@bash doc_book/plot.bash
 	@mdbook test -d ../target/doc_book doc_book #-L
 
 bench:

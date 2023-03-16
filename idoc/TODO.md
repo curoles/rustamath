@@ -4,7 +4,7 @@
 - polynomial tool
   * [x] eval x
   * [] roots range
-  * [] plot with https://crates.io/crates/plotters
+  * [x] plot with https://crates.io/crates/plotters
 - polynomial find roots
 - LA module
   * UI, display vector and matrix

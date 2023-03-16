@@ -4,10 +4,11 @@
 
 # Tools Guide
 
-- [Installation](tools/installation.md)
+`- [Installation](tools/installation.md)`
 - [Polynomial](tools/polynomial.md)
-- [Lottery](tools/lottery.md)
+`- [Lottery](tools/lottery.md)`
 
+```
 # Library Guide
 
 - [Chapter 1](./chapter_1.md)
@@ -19,3 +20,4 @@
 -----------
 
 [Contributors](misc/contributors.md)
+```

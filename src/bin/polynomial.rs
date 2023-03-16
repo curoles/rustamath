@@ -87,7 +87,7 @@ fn print_formula(coeffs: &[f64]) -> String {
     for (i,c) in coeffs.iter().enumerate() {
         s.push_str(&format!("{c}*x^{i}", c=c, i=i));
         if i < (coeffs.len() - 1) {
-            s.push_str(&format!(" + "));
+            s.push_str(" + ");
         }
     }
     s

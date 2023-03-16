@@ -7,3 +7,7 @@ src = "src"
 [output.html]
 
 [output.markdown]
+
+#[preprocessor.plot]
+#renderers = ["html"]
+#command = "bash doc_book/plot.bash"
