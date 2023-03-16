@@ -35,7 +35,7 @@ struct EvalArgs {
 
 #[derive(Args)]
 struct PlotArgs {
-    /// Plot name w/o extention
+    /// Plot file name w/o extention
     #[arg(short, long)]
     file_name: String,
 
@@ -47,6 +47,10 @@ struct PlotArgs {
     /// End x
     #[arg(short, long)]
     end: f64,
+
+    /// Derivative
+    #[arg(short, long)]
+    derivative: Option<f64>,
 
     /// Coefficients c0, c1, c2...
     #[arg(required = true)]
@@ -61,7 +65,7 @@ fn main() {
             eval(args.x, &args.coeffs, args.verbose)
         }
         Commands::Plot (args) => {
-            if let Err(err) = plot(&args.coeffs, args.start, args.end, &args.file_name) {
+            if let Err(err) = plot(&args.coeffs, args.start, args.end, &args) {
                 println!("Error {}", err);
             }
         }
@@ -95,13 +99,23 @@ fn print_formula(coeffs: &[f64]) -> String {
 
 use plotters::prelude::*;
 
+/*const plot_dot_and_label: _ = |x: f64, y: f64| {
+    return EmptyElement::at((x, y))
+        + Circle::new((0, 0), 3, ShapeStyle::from(&BLACK).filled())
+        + Text::new(
+            format!("({:.2},{:.2})", x, y),
+            (10, 0),
+            ("sans-serif", 15.0).into_font(),
+        );
+};*/
+
 // https://crates.io/crates/plotters
 // https://docs.rs/plotters/latest/plotters/
 // `rustamath-polynomial plot -f ../plot -s=-10 -e 10 -- 8 1 1 -1`
-fn plot(coeffs: &[f64], x_start: f64, x_end: f64, file_name: &String)
+fn plot(coeffs: &[f64], x_start: f64, x_end: f64, args: &PlotArgs)
 -> Result<(), Box<dyn std::error::Error>>
 {
-    let file_name = String::from(file_name) + ".svg";
+    let file_name = String::from(&args.file_name) + ".svg";
     println!("Saving to file {}", file_name);
     let backend = SVGBackend::new(
         &file_name,
@@ -109,12 +123,12 @@ fn plot(coeffs: &[f64], x_start: f64, x_end: f64, file_name: &String)
 
     backend.fill(&WHITE)?;
 
-    let xs: _ = (0..=100)
+    let ps: _ = (0..=100)
         .map(|x| x_start + (x as f64)*(x_end - x_start)/100.0)
         .map(|x| (x, polynomial_n(x, coeffs)))
         .collect::<Vec<(f64,f64)>>();
-    let y_start = xs.iter().fold(f64::INFINITY, |a, (_x,y)| a.min(*y));
-    let y_end = xs.iter().fold(f64::NEG_INFINITY, |a, (_x,y)| a.max(*y));
+    let y_start = ps.iter().fold(f64::INFINITY, |a, (_x,y)| a.min(*y));
+    let y_end = ps.iter().fold(f64::NEG_INFINITY, |a, (_x,y)| a.max(*y));
 
     println!("ranges x:[{} .. {}] y:[{} .. {}]", x_start, x_end, y_start, y_end);
 
@@ -129,16 +143,45 @@ fn plot(coeffs: &[f64], x_start: f64, x_end: f64, file_name: &String)
 
     chart
         .draw_series(LineSeries::new(
-            xs,
+            ps,
             &RED,
         ))?
-        .label("y = f(x)")
-        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], &RED));
+        .label("y = P(x)")
+        .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], RED));
+    
+    if let Some(dp_x) = args.derivative {
+        let (_, p_y, dp) = derivative_polynomial_n(dp_x, coeffs);
+        let offset = p_y - dp*dp_x;
+        let dps: _ = (0..=100)
+            .map(|x| x_start + (x as f64)*(x_end - x_start)/100.0)
+            .map(|x| (x, offset + dp*x))
+            .collect::<Vec<(f64,f64)>>();
+
+        chart
+            .draw_series(LineSeries::new(
+                dps,
+                &BLUE,
+            ))?
+            .label("y = dP(x)/dx")
+            .legend(|(x, y)| PathElement::new(vec![(x, y), (x + 20, y)], BLUE));
+        
+        /*let dot_and_label = |x: f32, y: f32| {
+            return EmptyElement::at((x, y))
+                + Circle::new((0, 0), 3, ShapeStyle::from(&BLACK).filled())
+                + Text::new(
+                    format!("({:.2},{:.2})", x, y),
+                    (10, 0),
+                    ("sans-serif", 15.0).into_font(),
+                );
+        };
+
+        backend.draw(&dot_and_label(dp_x as f32, p_y as f32))?;*/
+    }
 
     chart
         .configure_series_labels()
-        .background_style(&WHITE.mix(0.8))
-        .border_style(&BLACK)
+        .background_style(WHITE.mix(0.8))
+        .border_style(BLACK)
         .draw()?;
 
     Ok(())

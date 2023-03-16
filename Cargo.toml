@@ -15,7 +15,7 @@ inquire = "0.6"
 plotters = "0.3"
 
 [dev-dependencies]
-criterion = "0.4"
+criterion = { version = "0.4", features = ["html_reports"] }
 
 [[bin]]
 path = "src/bin/polynomial.rs"

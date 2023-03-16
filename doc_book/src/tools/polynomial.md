@@ -39,7 +39,7 @@ c0 + c1*x + c2*x^2 + ... + ci*x^i
 ### Example
 
 ```console
-rustamath-polynomial plot -f $OUT/poly1 -s=-10 -e 10 -- 200 -5 -1 0.1
+rustamath-polynomial plot -f $OUT/poly1 -s=-10 -e 10 -d 8 -- 200 -5 -1 0.1
 ```
 
 ![Plot](../image/poly1.svg)

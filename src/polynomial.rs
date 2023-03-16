@@ -117,8 +117,52 @@ macro_rules! polynomial {
     };
 }
 
-// this makes path: `use rastomath::polynomial::polynomial`
+// Trick to place macro `polinomial!` to `rastomath::polynomial::`
+// Now from outside we can: `use rastomath::polynomial::polynomial`
 pub use polynomial;
+
+/// Derivative of polynomial function.
+///
+/// There is a rick for evaluating a polynomial `P(x)` and
+/// its derivative dP(x)/dx simultaneously:
+/// `p=c[n-1]; dp=0.0;`
+/// `for(j=n-2;j>=0;j--) {dp=dp*x+p; p=p*x+c[j];}`
+/// which yields the polynomial as `p` and its derivative as `dp` using coefficients `c[0..n-1]`.
+///
+pub fn derivative_polynomial_n(x: f64, cs: &[f64]) -> (f64, f64, f64) {
+    let mut p = cs[cs.len()-1];
+    let mut dp = 0.0;
+
+    for i in (0..cs.len()-1).rev() {
+        dp = dp*x + p;
+        p = p*x + cs[i];
+    }
+    (x, p, dp)
+}
+
+/* evaluation of the polynomial and nd of its derivatives simultaneously
+Given the coefficients of a polynomial of degree nc as an array c[0..nc] of size nc+1 (with
+c[0] being the constant term), and given a value x, this routine fills an output array pd of size
+nd+1 with the value of the polynomial evaluated at x in pd[0], and the first nd derivatives at
+x in pd[1..nd].
+
+void ddpoly(VecDoub_I &c, const Doub x, VecDoub_O &pd)
+{
+Int nnd,j,i,nc=c.size()-1,nd=pd.size()-1;
+Doub cnst=1.0;
+pd[0]=c[nc];
+for (j=1;j<nd+1;j++) pd[j]=0.0;
+for (i=nc-1;i>=0;i--) {
+nnd=(nd < (nc-i) ? nd : nc-i);
+for (j=nnd;j>0;j--) pd[j]=pd[j]*x+pd[j-1];
+pd[0]=pd[0]*x+c[i];
+}
+for (i=2;i<nd+1;i++) { After the first derivative, factorial constants come in.
+cnst *= i;
+pd[i] *= cnst;
+}
+}
+*/
 
 #[cfg(test)]
 mod tests {
