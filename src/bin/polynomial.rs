@@ -65,7 +65,7 @@ fn main() {
             eval(args.x, &args.coeffs, args.verbose)
         }
         Commands::Plot (args) => {
-            if let Err(err) = plot(&args.coeffs, args.start, args.end, &args) {
+            if let Err(err) = plot(&args.coeffs, args.start, args.end, args) {
                 println!("Error {}", err);
             }
         }
