@@ -1,52 +1,16 @@
 //! Bisection root finding algorithm
 
-/// Errors that may happen in Bisection algorithm
-#[derive(Debug)]
-pub enum BisectionErr {
-    /// x range with y endpoints that do not straddle y=0
-    EndpointsNotStraddleYeq0,
-    /// Callback function failed
-    FunctionFailed,
-}
+use super::{RootsErr, Range, FnWithRoots, RootFinder};
 
-/// Bisection x and y ranges.
-pub type BisectionRange = (f64, f64, f64, f64);
-
-/// Solver iterate function
-pub type Solver = fn(fn(x: f64) -> Result<f64, ()>, BisectionRange
-    ) -> Result<(f64, BisectionRange), BisectionErr>;
-
-/// Prepare for bisecting iterations
-pub fn bisection_init(
-    f: fn(x: f64) -> Result<f64, ()>,
-    x_left: f64,
-    x_right: f64) -> Result<(f64, BisectionRange), BisectionErr>
-{
-    // guess root is in a middle of the range
-    let root = (x_left + x_right)/2.0;
-
-    let f_left = match f(x_left) {
-        Ok(y) => y,
-        Err(_) => return Err(BisectionErr::FunctionFailed),
-    };
-
-    let f_right = match f(x_right) {
-        Ok(y) => y,
-        Err(_) => return Err(BisectionErr::FunctionFailed),
-    };
-
-    if (f_left < 0.0 && f_right < 0.0) || (f_left > 0.0 && f_right > 0.0) {
-        return Err(BisectionErr::EndpointsNotStraddleYeq0);
-    }
-
-    Ok((root, (x_left, x_right, f_left, f_right)))
-}
+/// Bisection state that is transferred between iteration
+pub struct BisectionState {}
 
 /// Bisect searching range by half
 pub fn bisection_iterate(
-    f: fn(x: f64) -> Result<f64, ()>,
-    (x_left, x_right, f_left, f_right): BisectionRange
-    ) -> Result<(f64, BisectionRange), BisectionErr>
+    f: FnWithRoots,
+    (x_left, x_right, f_left, f_right): Range,
+    //_state: &mut BisectionState
+    ) -> Result<(f64, Range), RootsErr>
 {
     if f_left == 0.0 {
         return Ok((/*root=*/x_left, (x_left, x_left, f_left, f_left)));
@@ -60,7 +24,7 @@ pub fn bisection_iterate(
 
     let f_bisect = match f(x_bisect) {
         Ok(y) => y,
-        Err(_) => return Err(BisectionErr::FunctionFailed),
+        Err(_) => return Err(RootsErr::FunctionFailed),
     };
 
     if f_bisect == 0.0 {
@@ -78,6 +42,17 @@ pub fn bisection_iterate(
     }
 }
 
+/// Create new bisection root finder
+pub fn new_bisection_finder() -> RootFinder<BisectionState> {
+    RootFinder::<BisectionState> {
+        state: BisectionState {},
+        solver: bisection_iterate,
+    }
+}
+
+/// ITP state that is transferred between iteration
+pub struct ItpState {}
+
 /// Bisect with [Interpolate Truncate and Project](https://en.wikipedia.org/wiki/ITP_method)
 ///
 /// https://github.com/paulnorthrop/itp
@@ -87,8 +62,8 @@ pub fn bisection_iterate(
 ///
 pub fn itp_iterate(
     f: fn(x: f64) -> Result<f64, ()>,
-    (x_left, x_right, f_left, f_right): BisectionRange
-    ) -> Result<(f64, BisectionRange), BisectionErr>
+    (x_left, x_right, f_left, f_right): Range
+    ) -> Result<(f64, Range), RootsErr>
 {
     let   epsilon: f64 = 1e-10;
     let   k1: f64 = 0.1;//0.2 / (x_right - x_left);
@@ -127,7 +102,7 @@ pub fn itp_iterate(
     // Update range
     let y_itp = match f(x_itp) {
         Ok(y) => y,
-        Err(_) => return Err(BisectionErr::FunctionFailed),
+        Err(_) => return Err(RootsErr::FunctionFailed),
     };
 
     if y_itp.is_sign_positive() {
@@ -145,81 +120,10 @@ pub fn itp_iterate(
     }
 }
 
-#[cfg(test)]
-mod tests {
-
-    use super::*;
-
-    #[inline] fn sin(x: f64) -> Result<f64, ()> {
-        Ok(x.sin())
-    }
-
-    #[inline] fn lambert(x: f64) -> Result<f64, ()> {
-        Ok(x * x.exp() - 1.0)
-    }
-
-    #[inline] fn staircase(x: f64) -> Result<f64, ()> {
-        Ok((x * 10.0 - 1.0).ceil() + 0.5)
-    }
-
-    // https://github.com/paulnorthrop/itp
-    #[inline] fn warsaw(x: f64) -> Result<f64, ()> {
-        Ok(if x > -1.0 { (1.0/(1.0 + x)).sin() } else { -1.0 })
-    }
-
-    fn test_solver(
-        msg: &str,
-        f: fn(x: f64) -> Result<f64, ()>,
-        solver: Solver,
-        left: f64,
-        right: f64,
-        epsilon: f64,
-        expect: f64)
-    {
-        let x_left = left;
-        let x_right = right;
-
-        let (mut root, mut range) = match bisection_init(sin, x_left, x_right) {
-            Ok(res) => res,
-            Err(err) => { assert!(false, "initialization error: {:?}", err); return; }
-        };
-
-        const MAX_ITERS: usize = 100;
-        let mut i: usize = 0;
-        let mut old_root = root;
-
-        while i < MAX_ITERS {
-            (root, range) = match solver(f, range) {
-                Ok(res) => res,
-                Err(err) => { assert!(false, "error: {:?}", err); return; }
-            };
-            if expect_float_absolute_eq!(root, old_root, epsilon).is_ok() {
-            //if expect_f64_near!(root, expect).is_ok() {
-                break;
-            }
-            old_root = root;
-            i += 1;
-        }
-
-        // cargo test --lib tests::bisection -- --nocapture
-        println!("{}: root={}, expected={} iterations={}", msg, root, expect, i);
-
-        assert!(i < MAX_ITERS);
-    }
-
-    #[test]
-    fn bisection() {
-        test_solver("bisection sin(x)", sin, bisection_iterate, 3.0, 4.0, 1.0e-7, std::f64::consts::PI);
-        test_solver("bisection lambert(x)", lambert, bisection_iterate, -1.0, 1.0, 1.0e-7, 0.5671);
-        test_solver("bisection staircase(x)", staircase, bisection_iterate, -1.0, 1.0, 1.0e-11, 7.4e-11);
-        test_solver("bisection warsaw(x)", warsaw, bisection_iterate, -1.0, 1.0, 1.0e-7, -0.6817);
-    }
-
-    #[test]
-    fn itp() {
-        test_solver("ITP sin(x)", sin, itp_iterate, 3.0, 4.0, 1.0e-7, std::f64::consts::PI);
-        test_solver("ITP lambert(x)", lambert, itp_iterate, -1.0, 1.0, 1.0e-7, 0.5671);
-        test_solver("ITP staircase(x)", staircase, itp_iterate, -1.0, 1.0, 1.0e-11, 7.4e-11);
-        test_solver("ITP warsaw(x)", warsaw, itp_iterate, -1.0, 1.0, 1.0e-7, -0.6817);
+/// Create new ITP root finder
+pub fn new_itp_finder() -> RootFinder<ItpState> {
+    RootFinder::<ItpState> {
+        state: ItpState {},
+        solver: itp_iterate,
     }
 }
