@@ -1,5 +1,11 @@
 //! Roots finding algorithm
 
+pub mod bisection;
+pub mod itp;
+
+#[cfg(test)]
+mod tests;
+
 /// Errors that may happen in root finding algorithm
 #[derive(Debug)]
 pub enum RootsErr {
@@ -16,9 +22,10 @@ pub type Range = (f64, f64, f64, f64);
 pub type FnWithRoots = fn(x: f64) -> Result<f64, ()>;
 
 /// Solver function that performs one root finding iteration
-pub type Solver = fn(
+pub type Solver<S> = fn(
     FnWithRoots,
-    Range
+    Range,
+    &S,
 ) -> Result<(f64, Range), RootsErr>;
 
 
@@ -57,7 +64,7 @@ pub struct RootFinder<S> {
     /// State that gets transferred  between iterations
     pub state: S,
     ///
-    solver: Solver
+    solver: Solver<S>
 }
 
 /// Root found value, precision, number iterations and etc.
@@ -69,7 +76,13 @@ pub struct RootFinderResult {
     pub nr_iterations: usize
 }
 
-impl<S> RootFinder<S> {
+/// State trait
+pub trait RootFinderState {
+    /// Create new state
+    fn new() -> Self;
+}
+
+impl<S: RootFinderState> RootFinder<S> {
 
     /// Call solvers till `abs(prev-next) > epsilon`
     pub fn find(
@@ -86,11 +99,13 @@ impl<S> RootFinder<S> {
             Err(err) => { return Err(err); },
         };
 
+        let state: S = S::new();
+
         let mut nr_iterations: usize = 0;
         let mut old_root = root;
 
         while nr_iterations < max_iterations {
-            (root, range) = match (self.solver)(fun, range) {
+            (root, range) = match (self.solver)(fun, range, &state) {
                 Ok(res) => res,
                 Err(err) => { return Err(err); },
             };
@@ -111,8 +126,3 @@ impl<S> RootFinder<S> {
     }
 
 }
-
-pub mod bisection;
-
-#[cfg(test)]
-mod tests;
