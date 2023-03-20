@@ -121,6 +121,16 @@ macro_rules! polynomial {
 // Now from outside we can: `use rastomath::polynomial::polynomial`
 pub use polynomial;
 
+/// Polynomial defined as product of linear factors using roots.
+///
+pub fn polynomial_as_product_of_linear_factors(x: f64, scale: f64, roots: &[f64]) -> f64 {
+    let mut res = scale;
+    for root in roots.iter() {
+        res *= x - root;
+    }
+    res
+}
+
 /// Derivative of polynomial function.
 ///
 /// There is a rick for evaluating a polynomial `P(x)` and
@@ -193,5 +203,9 @@ mod tests {
         assert_eq!(polynomial_5(x, &c), naive_polynomial_n(x, &c));
         assert_f64_near!(polynomial_5(x, &c), polynomial_n(x, &c));
         assert_eq!(polynomial_5(x, &c), polynomial!(x, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6));
+
+        let roots = [-1.0, 0.0, 1.0];
+        assert_f64_near!(polynomial_as_product_of_linear_factors(x, 2.0, &roots),
+            2.0*(x+1.0)*(x)*(x-1.0));
     }
 }

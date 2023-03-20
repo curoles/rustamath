@@ -14,6 +14,8 @@ struct Cli {
 enum Commands {
     /// Evaluate polynomial f(x)
     Eval(EvalArgs),
+    /// Evaluate polynomial f(x) as product of linear factors
+    EvalAsFactors(EvalAsFactorsArgs),
     /// Plot polynomial f(x)
     Plot(PlotArgs),
     //roots
@@ -34,7 +36,32 @@ struct EvalArgs {
 }
 
 #[derive(Args)]
+struct EvalAsFactorsArgs {
+    /// x in f(x)
+    x: f64,
+
+    /// Scale in f(x)=Scale*(x - x0)*(x - x1)...
+    scale: f64,
+
+    /// Roots x0, x1, x2...
+    #[arg(required = true)]
+    roots: Vec<f64>,
+
+    /// Verbose output
+    #[arg(short, long, action = ArgAction::SetTrue)]
+    verbose: bool,
+}
+
+#[derive(Args)]
 struct PlotArgs {
+    /// Calculate polynomial as product of linear factors
+    #[arg(long, action = ArgAction::SetTrue)]
+    as_factors: bool,
+
+    /// Optional scale
+    #[arg(long, default_value = "1")]
+    scale: f64,
+
     /// Plot file name w/o extention
     #[arg(short, long)]
     file_name: String,
@@ -52,7 +79,7 @@ struct PlotArgs {
     #[arg(short, long)]
     derivative: Option<f64>,
 
-    /// Coefficients c0, c1, c2...
+    /// Coefficients c0, c1, c2... or roots if --as-factors
     #[arg(required = true)]
     coeffs: Vec<f64>,
 }
@@ -63,6 +90,9 @@ fn main() {
     match &cli.command {
         Commands::Eval (args) => {
             eval(args.x, &args.coeffs, args.verbose)
+        }
+        Commands::EvalAsFactors (args) => {
+            eval_as_factors(args.x, args.scale, &args.roots, args.verbose)
         }
         Commands::Plot (args) => {
             if let Err(err) = plot(&args.coeffs, args.start, args.end, args) {
@@ -86,12 +116,37 @@ fn eval(x: f64, coeffs: &[f64], verbose: bool) {
     }
 }
 
-fn print_formula(coeffs: &[f64]) -> String {
+fn eval_as_factors(x: f64, scale: f64, roots: &[f64], verbose: bool) {
+    println!("f({x}) = {y}", x=x, y=polynomial_as_product_of_linear_factors(x, scale, roots));
+
+    if verbose {
+        print!("{}*", scale);
+        for (i,root) in roots.iter().enumerate() {
+            print!("(x - {})", root);
+            if i < (roots.len() - 1) {
+                print!("*");
+            }
+        }
+        println!();
+    }
+}
+
+fn print_formula(coeffs: &[f64], as_factors: bool) -> String {
     let mut s = String::new();
-    for (i,c) in coeffs.iter().enumerate() {
-        s.push_str(&format!("{c}*x^{i}", c=c, i=i));
-        if i < (coeffs.len() - 1) {
-            s.push_str(" + ");
+    if as_factors {
+        for (i,root) in coeffs.iter().enumerate() {
+            s.push_str(&format!("(x - {})", root));
+            if i < (coeffs.len() - 1) {
+                s.push_str("*");
+            }
+        }
+    }
+    else {
+        for (i,c) in coeffs.iter().enumerate() {
+            s.push_str(&format!("{c}*x^{i}", c=c, i=i));
+            if i < (coeffs.len() - 1) {
+                s.push_str(" + ");
+            }
         }
     }
     s
@@ -123,9 +178,19 @@ fn plot(coeffs: &[f64], x_start: f64, x_end: f64, args: &PlotArgs)
 
     backend.fill(&WHITE)?;
 
+    let poly_fun = |x| {
+        if args.as_factors {
+            polynomial_as_product_of_linear_factors(x, args.scale, coeffs)
+        }
+        else {
+            polynomial_n(x, coeffs) * args.scale
+        }
+    };
+
     let ps: _ = (0..=100)
         .map(|x| x_start + (x as f64)*(x_end - x_start)/100.0)
-        .map(|x| (x, polynomial_n(x, coeffs)))
+        //.map(|x| (x, polynomial_n(x, coeffs)))
+        .map(|x| (x, poly_fun(x)))
         .collect::<Vec<(f64,f64)>>();
     let y_start = ps.iter().fold(f64::INFINITY, |a, (_x,y)| a.min(*y));
     let y_end = ps.iter().fold(f64::NEG_INFINITY, |a, (_x,y)| a.max(*y));
@@ -133,7 +198,7 @@ fn plot(coeffs: &[f64], x_start: f64, x_end: f64, args: &PlotArgs)
     println!("ranges x:[{} .. {}] y:[{} .. {}]", x_start, x_end, y_start, y_end);
 
     let mut chart = ChartBuilder::on(&backend)
-        .caption(print_formula(coeffs), ("sans-serif", 40).into_font())
+        .caption(print_formula(coeffs, args.as_factors), ("sans-serif", 40).into_font())
         .margin(5)
         .x_label_area_size(30)
         .y_label_area_size(40)

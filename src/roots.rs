@@ -2,6 +2,11 @@
 
 pub mod bisection;
 pub mod itp;
+//https://github.com/ampl/gsl/blob/master/roots/newton.c
+//https://github.com/ampl/gsl/blob/master/roots/steffenson.c
+//https://github.com/ampl/gsl/blob/master/roots/secant.c
+//https://github.com/ampl/gsl/blob/master/roots/falsepos.c
+//https://github.com/ampl/gsl/blob/master/roots/brent.c
 
 #[cfg(test)]
 mod tests;
@@ -84,6 +89,7 @@ pub trait RootFinderState {
 
 impl<S: RootFinderState> RootFinder<S> {
 
+    // TODO check https://github.com/ampl/gsl/blob/master/roots/convergence.c
     /// Call solvers till `abs(prev-next) > epsilon`
     pub fn find(
         &self,
