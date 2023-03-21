@@ -29,8 +29,8 @@ impl RootFinderState for ItpState {
 pub fn itp_iterate(
     f: fn(x: f64) -> Result<f64, ()>,
     (x_left, x_right, f_left, f_right): Range,
-    _state: &ItpState,
-    ) -> Result<(f64, Range), RootsErr>
+    state: ItpState,
+    ) -> Result<(f64, Range, ItpState), RootsErr>
 {
     let   epsilon: f64 = 1e-10;
     let   k1: f64 = 0.1;//0.2 / (x_right - x_left);
@@ -40,18 +40,24 @@ pub fn itp_iterate(
     let   log2bma = (x_right - x_left).log2();
     let   for_rk = 2.0_f64.powf(N0 - 1.0 + log2_epsilon + (log2bma - log2_epsilon).ceil());
 
-    let bstate: BisectionState = BisectionState{};
+
+    assert!(x_right >= x_left);
+    assert!(f_left.is_sign_positive() != f_right.is_sign_positive());
 
     if (x_right - x_left) <= 2.0*epsilon {
-        return bisection_iterate(f, (x_left, x_right, f_left, f_right), &bstate);
+        let bstate: BisectionState = BisectionState{};
+        match bisection_iterate(f, (x_left, x_right, f_left, f_right), bstate) {
+            Ok(b) => return Ok((b.0, b.1, state)),
+            Err(err) => return Err(err),
+        };
     }
 
     if f_left == 0.0 {
-        return Ok((/*root=*/x_left, (x_left, x_left, f_left, f_left)));
+        return Ok((/*root=*/x_left, (x_left, x_left, f_left, f_left), state));
     }
 
     if f_right == 0.0 {
-        return Ok((/*root=*/x_right, (x_right, x_right, f_right, f_right)));
+        return Ok((/*root=*/x_right, (x_right, x_right, f_right, f_right), state));
     }
 
     // Interpolation [Regula falsi](https://en.wikipedia.org/wiki/Regula_falsi)
@@ -74,18 +80,18 @@ pub fn itp_iterate(
         Err(_) => return Err(RootsErr::FunctionFailed),
     };
 
-    if y_itp.is_sign_positive() {
+    if y_itp.is_sign_positive() == f_right.is_sign_positive() {
         let x_right_new = x_itp;
         let f_right_new = y_itp;
         let root = (x_left + x_right_new) / 2.0;
-        Ok((root, (x_left, x_right_new, f_left, f_right_new)))
-    } else if y_itp.is_sign_negative() {
+        Ok((root, (x_left, x_right_new, f_left, f_right_new), state))
+    } else if y_itp.is_sign_positive() != f_right.is_sign_positive() {
         let x_left_new = x_itp;
         let f_left_new = y_itp;
         let root = (x_left_new + x_right) / 2.0;
-        Ok((root, (x_left_new, x_right, f_left_new, f_right)))
+        Ok((root, (x_left_new, x_right, f_left_new, f_right), state))
     } else {
-        Ok((x_itp, (x_itp, x_itp, y_itp, y_itp)))
+        Ok((x_itp, (x_itp, x_itp, y_itp, y_itp), state))
     }
 }
 

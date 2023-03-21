@@ -115,7 +115,7 @@ fn solvers() {
     test_solvers("f=sin[3,4]",       sin,  3.0,     4.0, 100, 1.0e-15, std::f64::consts::PI, true);
     test_solvers("f=sin[-4,-3]",     sin, -4.0,    -3.0, 100, 1.0e-15, -std::f64::consts::PI, true);
     test_solvers("f=sin[-1/3,1]",    sin, -1.0/3.0, 1.0, 100, 1.0e-15, 0.0, true);
-    test_solvers("f=cos[0,3]",       cos,  0.0,     3.0, 100, 1.0e-15, std::f64::consts::PI / 2.0, true);//ITP problem FIXME
+    test_solvers("f=cos[0,3]",       cos,  0.0,     3.0, 100, 1.0e-15, std::f64::consts::PI / 2.0, true);
     test_solvers("f=cos[-3,0]",      cos, -3.0,     0.0, 100, 1.0e-15, -std::f64::consts::PI / 2.0, true);
     // https://github.com/ampl/gsl/blob/master/roots/test_funcs.c
     test_solvers("f=x^20 - 1 [0.1,2]",  |x| Ok(x.powi(20) - 1.0),  0.1, 2.0, 100, 1.0e-15, 1.0, true);

@@ -16,15 +16,15 @@ impl RootFinderState for BisectionState {
 pub fn bisection_iterate(
     f: FnWithRoots,
     (x_left, x_right, f_left, f_right): Range,
-    _state: &BisectionState,
-    ) -> Result<(f64, Range), RootsErr>
+    state: BisectionState,
+    ) -> Result<(f64, Range, BisectionState), RootsErr>
 {
     if f_left == 0.0 {
-        return Ok((/*root=*/x_left, (x_left, x_left, f_left, f_left)));
+        return Ok((/*root=*/x_left, (x_left, x_left, f_left, f_left), state));
     }
 
     if f_right == 0.0 {
-        return Ok((/*root=*/x_right, (x_right, x_right, f_right, f_right)));
+        return Ok((/*root=*/x_right, (x_right, x_right, f_right, f_right), state));
     }
 
     let x_bisect = (x_left + x_right) / 2.0;
@@ -35,17 +35,17 @@ pub fn bisection_iterate(
     };
 
     if f_bisect == 0.0 {
-        return Ok((/*root=*/x_bisect, (x_bisect, x_bisect, f_bisect, f_bisect)));
+        return Ok((/*root=*/x_bisect, (x_bisect, x_bisect, f_bisect, f_bisect), state));
     }
 
     // Discard the half of the interval which doesn't contain the root.
     if (f_left > 0.0 && f_bisect < 0.0) || (f_left < 0.0 && f_bisect > 0.0) {
         let root = (x_left + x_bisect) / 2.0;
-        Ok((root, (x_left, x_bisect, f_left, f_bisect)))
+        Ok((root, (x_left, x_bisect, f_left, f_bisect), state))
     }
     else {
         let root = (x_bisect + x_right) / 2.0;
-        Ok((root, (x_bisect, x_right, f_bisect, f_right)))
+        Ok((root, (x_bisect, x_right, f_bisect, f_right), state))
     }
 }
 

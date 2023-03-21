@@ -16,6 +16,8 @@ enum Commands {
     Eval(EvalArgs),
     /// Evaluate polynomial f(x) as product of linear factors
     EvalAsFactors(EvalAsFactorsArgs),
+    ////TODO  Find roots of polynomial f(x)
+    //TOD Roots(RootsArgs),
     /// Plot polynomial f(x)
     Plot(PlotArgs),
     //roots
@@ -131,13 +133,14 @@ fn eval_as_factors(x: f64, scale: f64, roots: &[f64], verbose: bool) {
     }
 }
 
-fn print_formula(coeffs: &[f64], as_factors: bool) -> String {
+fn print_formula(coeffs: &[f64], scale: f64, as_factors: bool) -> String {
     let mut s = String::new();
     if as_factors {
+        s.push_str(&format!("{}*", scale));
         for (i,root) in coeffs.iter().enumerate() {
             s.push_str(&format!("(x - {})", root));
             if i < (coeffs.len() - 1) {
-                s.push_str("*");
+                s.push('*');
             }
         }
     }
@@ -198,7 +201,8 @@ fn plot(coeffs: &[f64], x_start: f64, x_end: f64, args: &PlotArgs)
     println!("ranges x:[{} .. {}] y:[{} .. {}]", x_start, x_end, y_start, y_end);
 
     let mut chart = ChartBuilder::on(&backend)
-        .caption(print_formula(coeffs, args.as_factors), ("sans-serif", 40).into_font())
+        .caption(print_formula(coeffs, args.scale, args.as_factors),
+            ("sans-serif", 40).into_font())
         .margin(5)
         .x_label_area_size(30)
         .y_label_area_size(40)

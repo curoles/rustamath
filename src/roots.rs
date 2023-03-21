@@ -30,8 +30,8 @@ pub type FnWithRoots = fn(x: f64) -> Result<f64, ()>;
 pub type Solver<S> = fn(
     FnWithRoots,
     Range,
-    &S,
-) -> Result<(f64, Range), RootsErr>;
+    S,
+) -> Result<(f64, Range, S), RootsErr>;
 
 
 /// Prepare for bisecting iterations.
@@ -105,13 +105,13 @@ impl<S: RootFinderState> RootFinder<S> {
             Err(err) => { return Err(err); },
         };
 
-        let state: S = S::new();
+        let mut state: S = S::new();
 
         let mut nr_iterations: usize = 0;
         let mut old_root = root;
 
         while nr_iterations < max_iterations {
-            (root, range) = match (self.solver)(fun, range, &state) {
+            (root, range, state) = match (self.solver)(fun, range, state) {
                 Ok(res) => res,
                 Err(err) => { return Err(err); },
             };
