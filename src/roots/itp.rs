@@ -5,8 +5,8 @@
 //!
 //! References:
 //!
-//! - https://en.wikipedia.org/wiki/ITP_method
-//! - https://github.com/paulnorthrop/itp
+//! - <https://en.wikipedia.org/wiki/ITP_method>
+//! - <https://github.com/paulnorthrop/itp>
 
 use super::{RootsErr, Range, /*FnWithRoots,*/ RootFinder, RootFinderState};
 use super::bisection::{BisectionState, bisection_iterate};
@@ -21,10 +21,10 @@ impl RootFinderState for ItpState {
 
 /// Bisect with [Interpolate Truncate and Project](https://en.wikipedia.org/wiki/ITP_method)
 ///
-/// https://github.com/paulnorthrop/itp
+/// <https://github.com/paulnorthrop/itp>
 ///
 /// TODO check all parameters, especially k1
-/// update `for_rk *= 0.5`? see https://github.com/paulnorthrop/itp/blob/main/src/itp_c.cpp
+/// update `for_rk *= 0.5`? see <https://github.com/paulnorthrop/itp/blob/main/src/itp_c.cpp>
 ///
 pub fn itp_iterate(
     f: fn(x: f64) -> Result<f64, ()>,

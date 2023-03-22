@@ -1,4 +1,4 @@
-//! Math functions
+//! Math algorithms and methods
 
 #![warn(missing_docs)]
 
@@ -7,6 +7,7 @@
 extern crate assert_float_eq;
 
 pub mod simd;
+pub mod function;
 pub mod roots;
 pub mod polynomial;
 pub mod random;
