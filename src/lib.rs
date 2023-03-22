@@ -7,6 +7,7 @@
 extern crate assert_float_eq;
 
 pub mod simd;
+pub mod constant;
 pub mod function;
 pub mod roots;
 pub mod polynomial;
