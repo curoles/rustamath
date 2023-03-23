@@ -25,6 +25,22 @@ use num_complex::{Complex};
     x.conj()
 }
 
+/// Return modulus or norm or absolute value
+///
+/// # Example
+///
+/// ```
+/// use rustamath::function::*;
+/// use num_complex::{Complex};
+/// use assert_float_eq::*;
+/// let a = Complex::new(2.1, 3.4);
+/// assert_f64_near!(complex::abs(a), hypotenuse(2.1, 3.4));
+/// ```
+#[inline] pub fn abs<T: Float>(x: Complex<T>) -> T
+{
+    x.norm()
+}
+
 // <https://docs.rs/num/latest/num/complex/struct.Complex.html#method.sin>
 /// sin(x)
 #[inline] pub fn sin<T: Float>(x: Complex<T>) -> Complex<T>

@@ -35,22 +35,22 @@ pub mod complex;
     val.is_infinite()
 }
 
-/// Compare two f32 numbers within number of steps
-#[inline] pub fn f32_compare(a: f32, b: f32, steps: u32) -> bool {
+/// Check two f32 numbers are close within number of steps/ulps
+#[inline] pub fn f32_near(a: f32, b: f32, steps: u32) -> bool {
     expect_f32_near!(a, b, steps.max(4)).is_ok()
 }
 
-/// Compare two f32 numbers within number of steps/ulps
-#[inline] pub fn f64_compare(a: f64, b: f64, steps: u32) -> bool {
+/// Check two f64 numbers are close within number of steps/ulps
+#[inline] pub fn f64_near(a: f64, b: f64, steps: u32) -> bool {
     expect_f64_near!(a, b, steps.max(4)).is_ok()
 }
 
 /// Compare two f64 float numbers
-#[inline] pub fn f64_compare_epsilon(a: f64, b: f64, epsilon: f64, relative: bool) -> bool
+#[inline] pub fn f64_near_precision(a: f64, b: f64, epsilon: f64, relative: bool) -> bool
 {
     a == b ||
     (if relative { (a - b)/a } else { a - b }).abs() <= epsilon.abs() ||
-    f64_compare(a, b, 4)
+    f64_near(a, b, 4)
 }
 
 /// Return accurate `ln(1 + x)`
