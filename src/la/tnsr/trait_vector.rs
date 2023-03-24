@@ -1,11 +1,18 @@
 //! Vector trait
-
+//!
+//! (c) 2013 Igor Lesik
+//! MIT license
+//!
 use num_traits::float;
+use std::fmt;
 
 /// Vector as 1D Tensor
 pub trait Vector<T>
     where T: float::Float
 {
+    /// For fmt::Debug and pretty printing
+    fn fmt_vector(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result;
+
     /// Get vector size or length
     fn size(&self) -> usize;
 

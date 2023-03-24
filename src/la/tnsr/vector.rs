@@ -4,12 +4,17 @@
 //! MIT license
 //!
 use num_traits::float;
+use std::fmt;
 use super::{Tnsr, Vector};
 use crate::simd;
 
 impl<T> Vector<T> for Tnsr<T>
     where T: float::Float
 {
+    fn fmt_vector(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "todo vector")
+    }
+
     /// Get vector size or length
     fn size(&self) -> usize {
         self.sizes[0]

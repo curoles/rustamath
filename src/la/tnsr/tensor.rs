@@ -4,11 +4,16 @@
 //! MIT license
 //!
 use num_traits::float;
+use std::fmt;
 use super::{Tnsr, Tensor};
 
 impl<T> Tensor<T> for Tnsr<T>
     where T: float::Float
 {
+    fn fmt_tensor(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "todo tensor")
+    }
+
     /// Get numbers of dimensions
     fn nr_dims(&self) -> usize {
         self.nr_dims

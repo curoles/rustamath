@@ -26,6 +26,10 @@ name = "rustamath-polynomial"
 path = "src/bin/lottery.rs"
 name = "rustamath-lottery"
 
+[[bin]]
+path = "src/bin/matrix.rs"
+name = "rustamath-matrix"
+
 [[bench]]
 name = "polynomial_benchmark"
 harness = false

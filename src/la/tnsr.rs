@@ -99,3 +99,17 @@ impl<T> Tnsr<T>
         &mut self.v
     }
 }
+
+use std::fmt;
+
+impl<T> fmt::Debug for Tnsr<T>
+    where T: float::Float
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.nr_dims {
+            1 => self.fmt_vector(f),
+            2 => self.fmt_matrix(f),
+            _ => self.fmt_tensor(f),
+        }
+    }
+}

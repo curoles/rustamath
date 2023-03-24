@@ -1,11 +1,18 @@
 //! Tensor trait
-
+//!
+//! (c) 2013 Igor Lesik
+//! MIT license
+//!
 use num_traits::float;
+use std::fmt;
 
 /// N-dimentional Tensor
 pub trait Tensor<T>
     where T: float::Float
 {
+    /// For fmt::Debug and pretty printing
+    fn fmt_tensor(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result;
+
     /// Get numbers of dimensions
     fn nr_dims(&self) -> usize;
 
