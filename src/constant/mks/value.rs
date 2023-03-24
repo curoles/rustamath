@@ -58,7 +58,7 @@ impl MksVal {
         }
     }
 
-    /// Find square root value and adjust unit
+    /// Find square root value and adjust units
     pub fn sqrt(&self) -> Self {
         Self {
             val: self.val.sqrt(),
@@ -66,11 +66,24 @@ impl MksVal {
         }
     }
 
-    /// Find cubic root value and adjust unit
+    /// Find cubic root value and adjust units
     pub fn cbrt(&self) -> Self {
         Self {
             val: self.val.cbrt(),
             unit: MksUnit {m: self.unit.m/3, k: self.unit.k/3, s: self.unit.s/3, a: self.unit.a/3}
+        }
+    }
+
+    /// Raise to integer power and adjust units
+    pub fn pow(&self, n: i8) -> Self {
+        Self {
+            val: self.val.powi(n.into()),
+            unit: MksUnit {
+                m: self.unit.m * n ,
+                k: self.unit.k * n,
+                s: self.unit.s * n,
+                a: self.unit.a * n
+            }
         }
     }
 }
