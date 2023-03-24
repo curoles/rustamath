@@ -12,7 +12,6 @@ use super::MksUnit;
 /// # Example
 ///
 /// ```
-/// # use rustamath::constant::mks::value::MksVal;
 /// # use rustamath::constant::mks::*;
 /// // simple pendulum period `T = 2*Pi*sqrt(L/g)`
 /// let pendulum_len = MksVal::new(6.0, f64::FOOT, FOOT_UNIT);
@@ -37,7 +36,6 @@ impl MksVal {
     /// # Example
     ///
     /// ```
-    /// use rustamath::constant::mks::value::MksVal;
     /// use rustamath::constant::mks::*;
     /// let half_speed_of_light = MksVal::new(0.5, f64::SPEED_OF_LIGHT, SPEED_OF_LIGHT_UNIT);
     /// assert!(half_speed_of_light.unit != MASS_PROTON_UNIT);
@@ -96,7 +94,6 @@ impl std::ops::Add for MksVal {
     /// # Example
     ///
     /// ```should_panic
-    /// use rustamath::constant::mks::value::MksVal;
     /// use rustamath::constant::mks::*;
     /// let half_speed_of_light = MksVal::new(0.5, f64::SPEED_OF_LIGHT, SPEED_OF_LIGHT_UNIT);
     /// let speed_of_light = half_speed_of_light + half_speed_of_light;
@@ -104,7 +101,7 @@ impl std::ops::Add for MksVal {
     /// let speed_of_light = half_speed_of_light + MksVal::new(1.0, f64::MASS_PROTON, MASS_PROTON_UNIT);
     /// ```
     fn add(self, rhs: Self) -> Self {
-        assert!(self.unit == rhs.unit);
+        debug_assert!(self.unit == rhs.unit);
         Self {
             unit: self.unit,
             val: self.val + rhs.val
@@ -121,7 +118,6 @@ impl std::ops::Sub for MksVal {
     /// # Example
     ///
     /// ```should_panic
-    /// use rustamath::constant::mks::value::MksVal;
     /// use rustamath::constant::mks::*;
     /// let half_speed_of_light = MksVal::new(0.5, f64::SPEED_OF_LIGHT, SPEED_OF_LIGHT_UNIT);
     /// let speed_of_light = half_speed_of_light + half_speed_of_light;
@@ -129,7 +125,7 @@ impl std::ops::Sub for MksVal {
     /// let speed_of_light = half_speed_of_light - MksVal::new(1.0, f64::MASS_PROTON, MASS_PROTON_UNIT);
     /// ```
     fn sub(self, rhs: Self) -> Self {
-        assert!(self.unit == rhs.unit);
+        debug_assert!(self.unit == rhs.unit);
         Self {
             unit: self.unit,
             val: self.val - rhs.val
@@ -145,7 +141,6 @@ impl std::ops::Mul for MksVal {
     /// # Example
     ///
     /// ```
-    /// use rustamath::constant::mks::value::MksVal;
     /// use rustamath::constant::mks::*;
     /// let half_speed_of_light = MksVal::new(0.5, f64::SPEED_OF_LIGHT, SPEED_OF_LIGHT_UNIT);
     /// let distance_after_2_weeks = half_speed_of_light * MksVal::new(2.0, f64::WEEK, WEEK_UNIT);
@@ -167,7 +162,6 @@ impl std::ops::Div for MksVal {
     /// # Example
     ///
     /// ```
-    /// use rustamath::constant::mks::value::MksVal;
     /// use rustamath::constant::mks::*;
     /// # use assert_float_eq::*;
     /// let speed_of_light = MksVal::new(1.0, f64::SPEED_OF_LIGHT, SPEED_OF_LIGHT_UNIT);

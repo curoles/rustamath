@@ -8,7 +8,9 @@
 //!
 
 pub mod list;
-pub mod value;
+
+mod value;
+pub use self::value::{MksVal};
 
 /// MKS unit as tuple of integer powers/dimentions (meter, kg, sec, ampere)
 #[derive(Debug, Copy, Clone)]
@@ -163,66 +165,111 @@ pub const MILES_PER_HOUR_UNIT:         MksUnit = MksUnit {m:  1, k:  0, s: -1, a
 /// km/h dimentions is [m/s]
 pub const KILOMETERS_PER_HOUR_UNIT:    MksUnit = MksUnit {m:  1, k:  0, s: -1, a:  0}; // m / s
 /// Knot
-pub const KNOT:                        MksUnit = MksUnit {m:  1, k:  0, s: -1, a:  0}; // m / s
+pub const KNOT_UNIT:                   MksUnit = MksUnit {m:  1, k:  0, s: -1, a:  0}; // m / s
 /// Kilogram
-pub const KILOGRAM:                    MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+pub const KILOGRAM_UNIT:               MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
 /// Pound mass
-pub const POUND_MASS:                  MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+pub const POUND_MASS_UNIT:             MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
 /// Ounce mass
-pub const OUNCE_MASS:                  MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+pub const OUNCE_MASS_UNIT:             MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
 /// Ton non-metric
-pub const TON:                         MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+pub const TON_UNIT:                    MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
 /// Metric ton
-pub const METRIC_TON:                  MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
-//pub const UK_TON:                      MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg */
-//pub const TROY_OUNCE:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg */
-//pub const CARAT:                       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg */
-//pub const UNIFIED_ATOMIC_MASS:         MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg */
-//pub const GRAM_FORCE:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / s^2 */
-//pub const POUND_FORCE:                 MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / s^2 */
-//pub const KILOPOUND_FORCE:             MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / s^2 */
-//pub const POUNDAL:                     MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / s^2 */
-//pub const CALORIE:                     MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
-//pub const BTU:                         MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
-//pub const THERM:                       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
-//pub const HORSEPOWER:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^3 */
-//pub const BAR:                         MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg / m s^2 */
-//pub const STD_ATMOSPHERE:              MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg / m s^2 */
-//pub const TORR:                        MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg / m s^2 */
-//pub const METER_OF_MERCURY:            MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg / m s^2 */
-//pub const INCH_OF_MERCURY:             MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg / m s^2 */
-//pub const INCH_OF_WATER:               MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg / m s^2 */
-//pub const PSI:                         MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg / m s^2 */
-//pub const POISE:                       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^-1 s^-1 */
-//pub const STOKES:                      MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* m^2 / s */
-//pub const STILB:                       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* cd / m^2 */
-//pub const LUMEN:                       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0};/* cd sr */
-//pub const LUX:                         MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* cd sr / m^2 */
-//pub const PHOT:                        MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* cd sr / m^2 */
-//pub const FOOTCANDLE:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* cd sr / m^2 */
-//pub const LAMBERT:                     MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* cd sr / m^2 */
-//pub const FOOTLAMBERT:                 MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* cd sr / m^2 */
-//pub const CURIE:                       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* 1 / s */
-//pub const ROENTGEN:                    MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* A s / kg */
-//pub const RAD:                         MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* m^2 / s^2 */
-//pub const SOLAR_MASS:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg */
-//pub const BOHR_RADIUS:                 MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* m */
-//pub const NEWTON:                      MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / s^2 */
-//pub const DYNE:                        MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0};/* kg m / s^2 */
-//pub const JOULE:                       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
-//pub const ERG:                         MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
-//pub const STEFAN_BOLTZMANN_CONSTANT:   MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg / K^4 s^3 */
-//pub const THOMSON_CROSS_SECTION:       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* m^2 */
-//pub const BOHR_MAGNETON:               MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* A m^2 */
-//pub const NUCLEAR_MAGNETON:            MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* A m^2 */
-//pub const ELECTRON_MAGNETIC_MOMENT:    MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* A m^2 */
-//pub const PROTON_MAGNETIC_MOMENT:      MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* A m^2 */
-//pub const FARADAY:                     MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0};/* A s / mol */
-//pub const ELECTRON_CHARGE:             MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* A s */
-//pub const VACUUM_PERMITTIVITY:         MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* A^2 s^4 / kg m^3 */
-//pub const VACUUM_PERMEABILITY:         MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / A^2 s^2 */
-//pub const DEBYE:                       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* A s^2 / m^2 */
-//pub const GAUSS:                       MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg / A s^2 */
+pub const METRIC_TON_UNIT:             MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+/// UK ton
+pub const UK_TON_UNIT:                 MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+/// Troy ounce
+pub const TROY_OUNCE_UNIT:             MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+/// Carat
+pub const CARAT_UNIT:                  MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+/// Unified atomic mass
+pub const UNIFIED_ATOMIC_MASS_UNIT:    MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+/// Gram force
+pub const GRAM_FORCE_UNIT:             MksUnit = MksUnit {m:  1, k:  1, s: -2, a:  0}; // kg m / s^2
+/// Pound force
+pub const POUND_FORCE_UNIT:            MksUnit = MksUnit {m:  1, k:  1, s: -2, a:  0}; // kg m / s^2
+//pub const KILOPOUND_FORCE_UNIT:      MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / s^2 */
+//pub const POUNDAL_UNIT:              MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / s^2 */
+//pub const CALORIE_UNIT:                MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
+//pub const BTU_UNIT:                    MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
+//pub const THERM_UNIT:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
+//pub const HORSEPOWER_UNIT:             MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^3 */
+/// Bar
+pub const BAR_UNIT:                    MksUnit = MksUnit {m: -1, k:  1, s: -2, a:  0}; // kg / m s^2
+/// Std atmosphere
+pub const STD_ATMOSPHERE_UNIT:         MksUnit = MksUnit {m: -1, k:  1, s: -2, a:  0}; // kg / m s^2
+/// Torr
+pub const TORR_UNIT:                   MksUnit = MksUnit {m: -1, k:  1, s: -2, a:  0}; // kg / m s^2
+/// Meter of mercury
+pub const METER_OF_MERCURY_UNIT:       MksUnit = MksUnit {m: -1, k:  1, s: -2, a:  0}; // kg / m s^2
+/// Inch of mercury
+pub const INCH_OF_MERCURY_UNIT:        MksUnit = MksUnit {m: -1, k:  1, s: -2, a:  0}; // kg / m s^2
+/// Inch of water
+pub const INCH_OF_WATER_UNIT:          MksUnit = MksUnit {m: -1, k:  1, s: -2, a:  0}; // kg / m s^2
+/// Psi
+pub const PSI_UNIT:                    MksUnit = MksUnit {m: -1, k:  1, s: -2, a:  0}; // kg / m s^2
+/// Poise
+pub const POISE_UNIT:                  MksUnit = MksUnit {m: -1, k:  1, s: -1, a:  0}; // kg m^-1 s^-1
+/// Stokes
+pub const STOKES_UNIT:                 MksUnit = MksUnit {m:  2, k:  0, s: -1, a:  0}; // m^2 / s
+/// Stilb
+pub const STILB_UNIT:                  MksUnit = MksUnit {m: -2, k:  0, s:  0, a:  0}; // cd / m^2
+/// Lumen
+pub const LUMEN_UNIT:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; // cd sr
+/// Lux
+pub const LUX_UNIT:                    MksUnit = MksUnit {m: -2, k:  0, s:  0, a:  0}; // cd sr / m^2
+/// Phot
+pub const PHOT_UNIT:                   MksUnit = MksUnit {m: -2, k:  0, s:  0, a:  0}; // cd sr / m^2
+/// Footcandle
+pub const FOOTCANDLE_UNIT:             MksUnit = MksUnit {m: -2, k:  0, s:  0, a:  0}; // cd sr / m^2
+/// Lambert
+pub const LAMBERT_UNIT:                MksUnit = MksUnit {m: -2, k:  0, s:  0, a:  0}; // cd sr / m^2
+/// Footlambert
+pub const FOOTLAMBERT_UNIT:            MksUnit = MksUnit {m: -2, k:  0, s:  0, a:  0}; // cd sr / m^2
+/// Curie
+pub const CURIE:                       MksUnit = MksUnit {m:  0, k:  0, s: -1, a:  0}; // 1 / s
+/// Roentgen
+pub const ROENTGEN_UNIT:               MksUnit = MksUnit {m:  0, k: -1, s:  1, a:  1}; // A s / kg
+/// Rad
+pub const RAD_UNIT:                    MksUnit = MksUnit {m:  2, k:  0, s: -2, a:  0}; // m^2 / s^2
+/// Solar mass
+pub const SOLAR_MASS_UNIT:             MksUnit = MksUnit {m:  0, k:  1, s:  0, a:  0}; // kg
+/// Bohr radius
+pub const BOHR_RADIUS_UNIT:            MksUnit = MksUnit {m:  1, k:  0, s:  0, a:  0}; // m
+/// Newton force
+pub const NEWTON_UNIT:                 MksUnit = MksUnit {m:  1, k:  1, s: -2, a:  0}; // kg m / s^2
+/// Dyne
+pub const DYNE_UNIT:                   MksUnit = MksUnit {m:  1, k:  1, s: -2, a:  0}; // kg m / s^2
+/// Joule
+pub const JOULE_UNIT:                  MksUnit = MksUnit {m:  2, k:  1, s: -2, a:  0}; // kg m^2 / s^2
+/// Erg
+pub const ERG_UNIT:                    MksUnit = MksUnit {m:  2, k:  1, s: -2, a:  0}; // kg m^2 / s^2
+/// STEFAN_BOLTZMANN_CONSTANT
+pub const STEFAN_BOLTZMANN_CONSTANT_UNIT: MksUnit = MksUnit {m:  0, k:  1, s: -3, a:  0}; // kg / K^4 s^3
+/// THOMSON_CROSS_SECTION
+pub const THOMSON_CROSS_SECTION_UNIT:  MksUnit = MksUnit {m:  2, k:  0, s:  0, a:  0}; // m^2
+/// Bohr magneton
+pub const BOHR_MAGNETON_UNIT:          MksUnit = MksUnit {m:  2, k:  0, s:  0, a:  1}; // A m^2
+/// Nuclear magneton
+pub const NUCLEAR_MAGNETON_UNIT:       MksUnit = MksUnit {m:  2, k:  0, s:  0, a:  1}; // A m^2
+/// Electron magnetic moment
+pub const ELECTRON_MAGNETIC_MOMENT_UNIT: MksUnit = MksUnit {m:  2, k:  0, s:  0, a:  1}; // A m^2
+/// Photon magnetic moment
+pub const PROTON_MAGNETIC_MOMENT_UNIT: MksUnit = MksUnit {m:  2, k:  0, s:  0, a:  1}; // A m^2
+/// Faraday
+pub const FARADAY_UNIT:                MksUnit = MksUnit {m:  0, k:  0, s:  1, a:  1}; // A s / mol
+/// Electron charge
+pub const ELECTRON_CHARGE_UNIT:        MksUnit = MksUnit {m:  0, k:  0, s:  1, a:  1}; // A s
+/// VACUUM_PERMITTIVITY
+pub const VACUUM_PERMITTIVITY_UNIT:    MksUnit = MksUnit {m: -3, k: -1, s:  4, a:  2}; // A^2 s^4 / kg m^3
+/// VACUUM_PERMEABILITY
+pub const VACUUM_PERMEABILITY_UNIT:    MksUnit = MksUnit {m:  1, k:  1, s: -2, a: -2}; // kg m / A^2 s^2
+/// Debye
+pub const DEBYE_UNIT:                  MksUnit = MksUnit {m: -2, k:  0, s:  2, a:  1}; // A s^2 / m^2
+/// Gauss
+pub const GAUSS_UNIT:                  MksUnit = MksUnit {m:  0, k:  1, s: -2, a: -1}; // kg / A s^2
+/// Ampere
+pub const AMPERE_UNIT:                 MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  1}; // A
 
 
 /// Constant factors for MKS units

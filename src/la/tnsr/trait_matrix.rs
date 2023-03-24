@@ -1,5 +1,8 @@
 //! Matrix trait
-
+//!
+//! (c) 2013 Igor Lesik
+//! MIT license
+//!
 use num_traits::float;
 
 /// Matrix as 2D Tensor
