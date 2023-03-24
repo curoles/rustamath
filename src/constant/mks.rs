@@ -7,133 +7,180 @@
 //! - <https://github.com/ampl/gsl/blob/master/const/gsl_const_mks.h>
 
 /// MKS unit as tuple of integer powers/dimentions (meter, kg, sec, ampere)
-pub type MksUnit = (i32, i32, i32, i32);
+#[derive(Debug)]
+pub struct MksUnit {
+    m: i8, k: i8, s: i8, a: i8
+}
+
+impl std::cmp::PartialEq for MksUnit {
+    fn eq(&self, other: &Self) -> bool {
+        self.m == other.m && self.k == other.k && self.s == other.s && self.a == other.a
+    }
+}
+
+impl std::ops::Mul for MksUnit {
+    type Output = Self;
+
+    /// Return unit type of multiplication of 2 values with unit type
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rustamath::constant::mks::*;
+    /// assert_eq!(SPEED_OF_LIGHT_UNIT * MINUTE_UNIT, LIGHT_YEAR_UNIT);
+    /// ```
+    fn mul(self, rhs: Self) -> Self {
+        Self {
+            m: self.m + rhs.m,
+            k: self.k + rhs.k,
+            s: self.s + rhs.s,
+            a: self.a + rhs.a
+        }
+    }
+}
+
+impl std::ops::Div for MksUnit {
+    type Output = Self;
+
+    /// Return unit type of division of 2 values with unit type
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rustamath::constant::mks::*;
+    /// assert_eq!(LIGHT_YEAR_UNIT / SPEED_OF_LIGHT_UNIT, MINUTE_UNIT);
+    /// ```
+    fn div(self, rhs: Self) -> Self {
+        Self {
+            m: self.m - rhs.m,
+            k: self.k - rhs.k,
+            s: self.s - rhs.s,
+            a: self.a - rhs.a
+        }
+    }
+}
 
 /// Speed of light [m/s]
-pub const SPEED_OF_LIGHT_UNIT:           MksUnit = ( 1,  0, -1,  0); // m / s
+pub const SPEED_OF_LIGHT_UNIT:         MksUnit = MksUnit {m:  1, k:  0, s: -1, a: 0}; // m / s
 /// Gravitational constant
-pub const GRAVITATIONAL_CONSTANT_UNIT:   MksUnit = ( 3, -1, -2,  0); // m^3 / kg s^2
+pub const GRAVITATIONAL_CONSTANT_UNIT: MksUnit = MksUnit {m:  3, k: -1, s: -2, a: 0}; // m^3 / kg s^2
 /// Planks constant
-pub const PLANCKS_CONSTANT_H_UNIT:       MksUnit = ( 2,  2, -1,  0); // kg m^2 / s
+pub const PLANCKS_CONSTANT_H_UNIT:     MksUnit = MksUnit {m:  2, k:  2, s: -1, a: 0}; // kg m^2 / s
 /// Planks bar constant
-pub const PLANCKS_CONSTANT_HBAR_UNIT:    MksUnit = ( 2,  2, -1,  0); // kg m^2 / s
+pub const PLANCKS_CONSTANT_HBAR_UNIT:  MksUnit = MksUnit {m:  2, k:  2, s: -1, a: 0}; // kg m^2 / s
 /// Astronomical unit of lenght
-pub const ASTRONOMICAL_UNIT_UNIT:        MksUnit = ( 1,  0,  0,  0); // m
+pub const ASTRONOMICAL_UNIT_UNIT:      MksUnit = MksUnit {m:  1, k:  0, s:  0, a: 0}; // m
 /// Light year
-pub const LIGHT_YEAR_UNIT:               MksUnit = ( 1,  0,  0,  0); // m
+pub const LIGHT_YEAR_UNIT:             MksUnit = MksUnit {m:  1, k:  0, s:  0, a: 0}; // m
 /// Parsec
-pub const PARSEC_UNIT:                   MksUnit = ( 1,  0,  0,  0); // m
+pub const PARSEC_UNIT:                 MksUnit = MksUnit {m:  1, k:  0, s:  0, a: 0}; // m
 /// Acceleration
-pub const GRAV_ACCEL_UNIT:               MksUnit = ( 1,  0, -2,  0); // m / s^2
+pub const GRAV_ACCEL_UNIT:             MksUnit = MksUnit {m:  1, k:  0, s: -2, a: 0}; // m / s^2
 /// Electron Volt
-pub const ELECTRON_VOLT_UNIT:            MksUnit = ( 2,  1, -2,  0); // kg m^2 / s^2
+pub const ELECTRON_VOLT_UNIT:          MksUnit = MksUnit {m:  2, k:  1, s: -2, a: 0}; // kg m^2 / s^2
 /// Mass of electron
-pub const MASS_ELECTRON_UNIT:            MksUnit = ( 0,  1,  0,  0); // kg
+pub const MASS_ELECTRON_UNIT:          MksUnit = MksUnit {m:  0, k:  1, s:  0, a: 0}; // kg
 /// Mass of muon
-pub const MASS_MUON_UNIT:                MksUnit = ( 0,  1,  0,  0); // kg
+pub const MASS_MUON_UNIT:              MksUnit = MksUnit {m:  0, k:  1, s:  0, a: 0}; // kg
 /// Mass of proton
-pub const MASS_PROTON_UNIT:              MksUnit = ( 0,  1,  0,  0); // kg
+pub const MASS_PROTON_UNIT:            MksUnit = MksUnit {m:  0, k:  1, s:  0, a: 0}; // kg
 /// Mass neutron
-pub const MASS_NEUTRON_UNIT:             MksUnit = ( 0,  1,  0,  0); // kg
+pub const MASS_NEUTRON_UNIT:           MksUnit = MksUnit {m:  0, k:  1, s:  0, a: 0}; // kg
 /// Rydberg
-pub const RYDBERG_UNIT:                  MksUnit = ( 2,  1, -2,  0); // kg m^2 / s^2
+pub const RYDBERG_UNIT:                MksUnit = MksUnit {m:  2, k:  1, s: -2, a: 0}; // kg m^2 / s^2
 /// Boltzmann
-pub const BOLTZMANN_UNIT:                MksUnit = ( 2,  1, -2,  0); // kg m^2 / K s^2
+pub const BOLTZMANN_UNIT:              MksUnit = MksUnit {m:  2, k:  1, s: -2, a: 0}; // kg m^2 / K s^2
 /// Molar of gas
-pub const MOLAR_GAS_UNIT:                MksUnit = ( 2,  1, -2,  0); // kg m^2 / K mol s^2
+pub const MOLAR_GAS_UNIT:              MksUnit = MksUnit {m:  2, k:  1, s: -2, a: 0}; // kg m^2 / K mol s^2
 /// Standard gas volume
-pub const STANDARD_GAS_VOLUME_UNIT:      MksUnit = ( 3,  0,  0,  0); // m^3 / mol
+pub const STANDARD_GAS_VOLUME_UNIT:    MksUnit = MksUnit {m:  3, k:  0, s:  0, a: 0}; // m^3 / mol
 /// One minute of time
-pub const MINUTE_UNIT     :              MksUnit = ( 0,  0,  1,  0);
-//pub const HOUR:                   MksUnit = ( 0,  0,  0,  0); /* s */
-//pub const DAY:                    MksUnit = ( 0,  0,  0,  0); /* s */
-//pub const WEEK:                   MksUnit = ( 0,  0,  0,  0); /* s */
-//pub const INCH:                   MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const FOOT:                   MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const YARD:                   MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const MILE:                   MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const NAUTICAL_MILE:          MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const FATHOM:                 MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const MIL:                    MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const POINT:                  MksUnit = ( 0,  0,  0,  0);) /* m */
-//pub const TEXPOINT:               MksUnit = ( 0,  0,  0,  0);) /* m */
-//pub const MICRON:                 MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const ANGSTROM:               MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const HECTARE:                MksUnit = ( 0,  0,  0,  0); /* m^2 */
-//pub const ACRE:                   MksUnit = ( 0,  0,  0,  0); /* m^2 */
-//pub const BARN:                   MksUnit = ( 0,  0,  0,  0); /* m^2 */
-//pub const LITER:                  MksUnit = ( 0,  0,  0,  0);/* m^3 */
-//pub const US_GALLON:              MksUnit = ( 0,  0,  0,  0); /* m^3 */
-//pub const QUART:                  MksUnit = ( 0,  0,  0,  0); /* m^3 */
-//pub const PINT:                   MksUnit = ( 0,  0,  0,  0);) /* m^3 */
-//pub const CUP:                    MksUnit = ( 0,  0,  0,  0); /* m^3 */
-//pub const FLUID_OUNCE:            MksUnit = ( 0,  0,  0,  0);) /* m^3 */
-//pub const TABLESPOON:             MksUnit = ( 0,  0,  0,  0); /* m^3 */
-//pub const TEASPOON:               MksUnit = ( 0,  0,  0,  0); /* m^3 */
-//pub const CANADIAN_GALLON:        MksUnit = ( 0,  0,  0,  0); /* m^3 */
-//pub const UK_GALLON:              MksUnit = ( 0,  0,  0,  0); /* m^3 */
-//pub const MILES_PER_HOUR:         MksUnit = ( 0,  0,  0,  0); /* m / s */
+pub const MINUTE_UNIT:                 MksUnit = MksUnit {m:  0, k:  0, s:  1, a: 0}; // s
+//pub const HOUR_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* s */
+//pub const DAY_UNIT:                    MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* s */
+//pub const WEEK_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* s */
+//pub const INCH_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m */
+//pub const FOOT_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m */
+//pub const YARD_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m */
+//pub const MILE_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m */
+//pub const NAUTICAL_MILE_UNIT:          MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m */
+//pub const FATHOM_UNIT:                 MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}); /* m */
+//pub const MIL_UNIT:                    MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m */
+//pub const POINT_UNIT:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0};) /* m */
+//pub const TEXPOINT_UNIT:               MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0};) /* m */
+//pub const MICRON_UNIT:                 MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m */
+//pub const ANGSTROM_UNIT:               MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m */
+//pub const HECTARE_UNIT:                MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^2 */
+//pub const ACRE_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^2 */
+//pub const BARN_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^2 */
+//pub const LITER_UNIT:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0};/* m^3 */
+//pub const US_GALLON_UNIT:              MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^3 */
+//pub const QUART_UNIT:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^3 */
+//pub const PINT_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0};) /* m^3 */
+//pub const CUP_UNIT:                    MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^3 */
+//pub const FLUID_OUNCE_UNIT:            MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0};) /* m^3 */
+//pub const TABLESPOON_UNIT:             MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^3 */
+//pub const TEASPOON_UNIT:               MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^3 */
+//pub const CANADIAN_GALLON_UNIT:        MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^3 */
+//pub const UK_GALLON_UNIT:              MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m^3 */
+//pub const MILES_PER_HOUR_UNIT:         MksUnit = MksUnit {m:  0, k:  0, s:  0, a: 0}; /* m / s */
 /// km/h dimentions is [m/s]
-pub const KILOMETERS_PER_HOUR_UNIT: MksUnit = ( 1,  0, -1,  0);
-//pub const KNOT: MksUnit = ( 0,  0,  0,  0); /* m / s */
-//pub const POUND_MASS: MksUnit = ( 0,  0,  0,  0);/* kg */
-//pub const OUNCE_MASS: MksUnit = ( 0,  0,  0,  0); /* kg */
-//pub const TON: MksUnit = ( 0,  0,  0,  0); /* kg */
-//pub const METRIC_TON: MksUnit = ( 0,  0,  0,  0); /* kg */
-//pub const UK_TON: MksUnit = ( 0,  0,  0,  0); /* kg */
-//pub const TROY_OUNCE: MksUnit = ( 0,  0,  0,  0); /* kg */
-//pub const CARAT: MksUnit = ( 0,  0,  0,  0); /* kg */
-//pub const UNIFIED_ATOMIC_MASS: MksUnit = ( 0,  0,  0,  0); /* kg */
-//pub const GRAM_FORCE: MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
-//pub const POUND_FORCE: MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
-//pub const KILOPOUND_FORCE: MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
-//pub const POUNDAL: MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
-//pub const CALORIE: MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
-//pub const BTU: MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
-//pub const THERM: MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
-//pub const HORSEPOWER: MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^3 */
-//pub const BAR: MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
-//pub const STD_ATMOSPHERE: MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
-//pub const TORR: MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
-//pub const METER_OF_MERCURY: MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
-//pub const INCH_OF_MERCURY: MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
-//pub const INCH_OF_WATER: MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
-//pub const PSI MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
-//pub const POISE MksUnit = ( 0,  0,  0,  0); /* kg m^-1 s^-1 */
-//pub const STOKES MksUnit = ( 0,  0,  0,  0); /* m^2 / s */
-//pub const STILB MksUnit = ( 0,  0,  0,  0); /* cd / m^2 */
-//pub const LUMEN MksUnit = ( 0,  0,  0,  0);/* cd sr */
-//pub const LUX MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
-//pub const PHOT MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
-//pub const FOOTCANDLE MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
-//pub const LAMBERT MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
-//pub const FOOTLAMBERT MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
-//pub const CURIE MksUnit = ( 0,  0,  0,  0); /* 1 / s */
-//pub const ROENTGEN MksUnit = ( 0,  0,  0,  0); /* A s / kg */
-//pub const RAD MksUnit = ( 0,  0,  0,  0); /* m^2 / s^2 */
-//pub const SOLAR_MASS MksUnit = ( 0,  0,  0,  0); /* kg */
-//pub const BOHR_RADIUS MksUnit = ( 0,  0,  0,  0); /* m */
-//pub const NEWTON MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
-//pub const DYNE MksUnit = ( 0,  0,  0,  0);/* kg m / s^2 */
-//pub const JOULE MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
-//pub const ERG MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
-//pub const STEFAN_BOLTZMANN_CONSTANT MksUnit = ( 0,  0,  0,  0); /* kg / K^4 s^3 */
-//pub const THOMSON_CROSS_SECTION MksUnit = ( 0,  0,  0,  0); /* m^2 */
-//pub const BOHR_MAGNETON MksUnit = ( 0,  0,  0,  0); /* A m^2 */
-//pub const NUCLEAR_MAGNETON MksUnit = ( 0,  0,  0,  0); /* A m^2 */
-//pub const ELECTRON_MAGNETIC_MOMENT MksUnit = ( 0,  0,  0,  0); /* A m^2 */
-//pub const PROTON_MAGNETIC_MOMENT MksUnit = ( 0,  0,  0,  0); /* A m^2 */
-//pub const FARADAY MksUnit = ( 0,  0,  0,  0);/* A s / mol */
-//pub const ELECTRON_CHARGE (MksUnit = ( 0,  0,  0,  0); /* A s */
-//pub const VACUUM_PERMITTIVITY MksUnit = ( 0,  0,  0,  0); /* A^2 s^4 / kg m^3 */
-//pub const VACUUM_PERMEABILITY MksUnit = ( 0,  0,  0,  0); /* kg m / A^2 s^2 */
-//pub const DEBYE (MksUnit = ( 0,  0,  0,  0); /* A s^2 / m^2 */
-//pub const GAUSS (MksUnit = ( 0,  0,  0,  0); /* kg / A s^2 */
+pub const KILOMETERS_PER_HOUR_UNIT: MksUnit = MksUnit {m: 1, k: 0, s: -1, a: 0};
+//pub const KNOT:                        MksUnit = ( 0,  0,  0,  0); /* m / s */
+//pub const POUND_MASS:                  MksUnit = ( 0,  0,  0,  0);/* kg */
+//pub const OUNCE_MASS:                  MksUnit = ( 0,  0,  0,  0); /* kg */
+//pub const TON:                         MksUnit = ( 0,  0,  0,  0); /* kg */
+//pub const METRIC_TON:                  MksUnit = ( 0,  0,  0,  0); /* kg */
+//pub const UK_TON:                      MksUnit = ( 0,  0,  0,  0); /* kg */
+//pub const TROY_OUNCE:                  MksUnit = ( 0,  0,  0,  0); /* kg */
+//pub const CARAT:                       MksUnit = ( 0,  0,  0,  0); /* kg */
+//pub const UNIFIED_ATOMIC_MASS:         MksUnit = ( 0,  0,  0,  0); /* kg */
+//pub const GRAM_FORCE:                  MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
+//pub const POUND_FORCE:                 MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
+//pub const KILOPOUND_FORCE:             MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
+//pub const POUNDAL:                     MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
+//pub const CALORIE:                     MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
+//pub const BTU:                         MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
+//pub const THERM:                       MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
+//pub const HORSEPOWER:                  MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^3 */
+//pub const BAR:                         MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
+//pub const STD_ATMOSPHERE:              MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
+//pub const TORR:                        MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
+//pub const METER_OF_MERCURY:            MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
+//pub const INCH_OF_MERCURY:             MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
+//pub const INCH_OF_WATER:               MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
+//pub const PSI:                         MksUnit = ( 0,  0,  0,  0); /* kg / m s^2 */
+//pub const POISE:                       MksUnit = ( 0,  0,  0,  0); /* kg m^-1 s^-1 */
+//pub const STOKES:                      MksUnit = ( 0,  0,  0,  0); /* m^2 / s */
+//pub const STILB:                       MksUnit = ( 0,  0,  0,  0); /* cd / m^2 */
+//pub const LUMEN:                       MksUnit = ( 0,  0,  0,  0);/* cd sr */
+//pub const LUX:                         MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
+//pub const PHOT:                        MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
+//pub const FOOTCANDLE:                  MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
+//pub const LAMBERT:                     MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
+//pub const FOOTLAMBERT:                 MksUnit = ( 0,  0,  0,  0); /* cd sr / m^2 */
+//pub const CURIE:                       MksUnit = ( 0,  0,  0,  0); /* 1 / s */
+//pub const ROENTGEN:                    MksUnit = ( 0,  0,  0,  0); /* A s / kg */
+//pub const RAD:                         MksUnit = ( 0,  0,  0,  0); /* m^2 / s^2 */
+//pub const SOLAR_MASS:                  MksUnit = ( 0,  0,  0,  0); /* kg */
+//pub const BOHR_RADIUS:                 MksUnit = ( 0,  0,  0,  0); /* m */
+//pub const NEWTON:                      MksUnit = ( 0,  0,  0,  0); /* kg m / s^2 */
+//pub const DYNE:                        MksUnit = ( 0,  0,  0,  0);/* kg m / s^2 */
+//pub const JOULE:                       MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
+//pub const ERG:                         MksUnit = ( 0,  0,  0,  0); /* kg m^2 / s^2 */
+//pub const STEFAN_BOLTZMANN_CONSTANT:   MksUnit = ( 0,  0,  0,  0); /* kg / K^4 s^3 */
+//pub const THOMSON_CROSS_SECTION:       MksUnit = ( 0,  0,  0,  0); /* m^2 */
+//pub const BOHR_MAGNETON:               MksUnit = ( 0,  0,  0,  0); /* A m^2 */
+//pub const NUCLEAR_MAGNETON:            MksUnit = ( 0,  0,  0,  0); /* A m^2 */
+//pub const ELECTRON_MAGNETIC_MOMENT:    MksUnit = ( 0,  0,  0,  0); /* A m^2 */
+//pub const PROTON_MAGNETIC_MOMENT:      MksUnit = ( 0,  0,  0,  0); /* A m^2 */
+//pub const FARADAY:                     MksUnit = ( 0,  0,  0,  0);/* A s / mol */
+//pub const ELECTRON_CHARGE:             MksUnit = ( 0,  0,  0,  0); /* A s */
+//pub const VACUUM_PERMITTIVITY:         MksUnit = ( 0,  0,  0,  0); /* A^2 s^4 / kg m^3 */
+//pub const VACUUM_PERMEABILITY:         MksUnit = ( 0,  0,  0,  0); /* kg m / A^2 s^2 */
+//pub const DEBYE:                       MksUnit = ( 0,  0,  0,  0); /* A s^2 / m^2 */
+//pub const GAUSS:                       MksUnit = ( 0,  0,  0,  0); /* kg / A s^2 */
 
-/// Return true if units have the same dimentions
-#[inline] pub fn is_unit_eq(a: MksUnit, b: MksUnit) -> bool {
-    a == b
-}
 
 /// List of MKS units
 pub enum Name {
@@ -394,7 +441,7 @@ where
     /// ```
     /// use rustamath::constant::mks::*;
     /// use assert_float_eq::*;
-    /// assert!(is_unit_eq(SPEED_OF_LIGHT_UNIT, KILOMETERS_PER_HOUR_UNIT));
+    /// assert!(SPEED_OF_LIGHT_UNIT == KILOMETERS_PER_HOUR_UNIT);
     /// assert!(SPEED_OF_LIGHT_UNIT != MINUTE_UNIT);
     /// assert_float_absolute_eq!(
     ///     1.0_f64.to_units(f64::SPEED_OF_LIGHT).in_units(f64::KILOMETERS_PER_HOUR),
