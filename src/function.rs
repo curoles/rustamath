@@ -1,6 +1,6 @@
 //! Math functions
 //!
-//! (c) Igor Lesik 2023
+//! (c) 2013 Igor Lesik
 //! MIT license
 //!
 //! See existing functions: <https://doc.rust-lang.org/std/primitive.f64.html>

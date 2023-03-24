@@ -1,10 +1,13 @@
 //! MKS constants
 //!
-//! (c) Igor Lesik 2023
+//! (c) 2023 Igor Lesik
 //! MIT license
 //!
 //! References:
 //! - <https://github.com/ampl/gsl/blob/master/const/gsl_const_mks.h>
+//!
+
+pub mod list;
 
 /// MKS unit as tuple of integer powers/dimentions (meter, kg, sec, ampere)
 #[derive(Debug)]
@@ -186,238 +189,6 @@ pub const KILOMETERS_PER_HOUR_UNIT: MksUnit = MksUnit {m: 1, k: 0, s: -1, a: 0};
 //pub const GAUSS:                       MksUnit = ( 0,  0,  0,  0); /* kg / A s^2 */
 
 
-/// List of MKS units
-pub enum Name {
-    /// Speef of light
-    SpeedOfLight,
-    /// Gravitational constant
-    GravitationalConstant,
-    /// Plancks h constant
-    PlancksConstantH,
-    /// Plancks h-bar constant
-    PlancksConstantHBar,
-    /// Astronomical unit
-    AstronomicalUnit,
-    /// Light year
-    LightYear,
-    /// Parsec
-    Parsec,
-    /// Acceleration
-    GravAccel,
-    /// Electron Volt
-    ElectronVolt,
-    /// Mass of electron
-    MassElectron,
-    /// Mass of muon
-    MassMuon,
-    /// Mass of proton
-    MassProton,
-    /// Mass of neutron
-    MassNeutron,
-    /// Rydberg
-    Rydberg,
-    /// Boltzmann
-    Boltzmann,
-    /// Molar
-    MolarGas,
-    /// Standard gas volume
-    StandardGasVolume,
-    /// Minute of time
-    Minute,
-    //const HOUR:                   f64 = (3.6e3) /* s */
-    //const DAY:                    f64 = (8.64e4) /* s */
-    //const WEEK:                   f64 = (6.048e5) /* s */
-    //const INCH:                   f64 = (2.54e-2) /* m */
-    //const FOOT:                   f64 = (3.048e-1) /* m */
-    //const YARD:                   f64 = (9.144e-1) /* m */
-    //const MILE:                   f64 = (1.609344e3) /* m */
-    //const NAUTICAL_MILE: f64 = (1.852e3) /* m */
-    //const FATHOM: f64 = (1.8288e0) /* m */
-    //const MIL: f64 = (2.54e-5) /* m */
-    //const POINT: f64 = (3.52777777778e-4) /* m */
-    //const TEXPOINT: f64 = (3.51459803515e-4) /* m */
-    //const MICRON: f64 = (1e-6) /* m */
-    //const ANGSTROM: f64 = (1e-10) /* m */
-    //const HECTARE: f64 = (1e4) /* m^2 */
-    //const ACRE: f64 = (4.04685642241e3) /* m^2 */
-    //const BARN: f64 = (1e-28) /* m^2 */
-    //const LITER: f64 = (1e-3) /* m^3 */
-    //const US_GALLON: f64 = (3.78541178402e-3) /* m^3 */
-    //const QUART: f64 = (9.46352946004e-4) /* m^3 */
-    //const PINT: f64 = (4.73176473002e-4) /* m^3 */
-    //const CUP: f64 = (2.36588236501e-4) /* m^3 */
-    //const FLUID_OUNCE: f64 = (2.95735295626e-5) /* m^3 */
-    //const TABLESPOON: f64 = (1.47867647813e-5) /* m^3 */
-    //const TEASPOON: f64 = (4.92892159375e-6) /* m^3 */
-    //const CANADIAN_GALLON: f64 = (4.54609e-3) /* m^3 */
-    //const UK_GALLON: f64 = (4.546092e-3) /* m^3 */
-    //const MILES_PER_HOUR: f64 = (4.4704e-1) /* m / s */
-    /// km/h
-    KilometersPerHour,
-    //const KNOT: f64 = (5.14444444444e-1) /* m / s */
-    //const POUND_MASS: f64 = (4.5359237e-1) /* kg */
-    //const OUNCE_MASS: f64 = (2.8349523125e-2) /* kg */
-    //const TON: f64 = (9.0718474e2) /* kg */
-    //const METRIC_TON: f64 = (1e3) /* kg */
-    //const UK_TON: f64 = (1.0160469088e3) /* kg */
-    //const TROY_OUNCE: f64 = (3.1103475e-2) /* kg */
-    //const CARAT: f64 = (2e-4) /* kg */
-    //const UNIFIED_ATOMIC_MASS: f64 = (1.660538782e-27) /* kg */
-    //const GRAM_FORCE: f64 = (9.80665e-3) /* kg m / s^2 */
-    //const POUND_FORCE: f64 = (4.44822161526e0) /* kg m / s^2 */
-    //const KILOPOUND_FORCE: f64 = (4.44822161526e3) /* kg m / s^2 */
-    //const POUNDAL: f64 = (1.38255e-1) /* kg m / s^2 */
-    //const CALORIE: f64 = (4.1868e0) /* kg m^2 / s^2 */
-    //const BTU: f64 = (1.05505585262e3) /* kg m^2 / s^2 */
-    //const THERM: f64 = (1.05506e8) /* kg m^2 / s^2 */
-    //const HORSEPOWER: f64 = (7.457e2) /* kg m^2 / s^3 */
-    //const BAR: f64 = (1e5) /* kg / m s^2 */
-    //const STD_ATMOSPHERE: f64 = (1.01325e5) /* kg / m s^2 */
-    //const TORR: f64 = (1.33322368421e2) /* kg / m s^2 */
-    //const METER_OF_MERCURY: f64 = (1.33322368421e5) /* kg / m s^2 */
-    //const INCH_OF_MERCURY: f64 = (3.38638815789e3) /* kg / m s^2 */
-    //const INCH_OF_WATER: f64 = (2.490889e2) /* kg / m s^2 */
-    //const PSI (6.89475729317e3) /* kg / m s^2 */
-    //const POISE (1e-1) /* kg m^-1 s^-1 */
-    //const STOKES (1e-4) /* m^2 / s */
-    //const STILB (1e4) /* cd / m^2 */
-    //const LUMEN (1e0) /* cd sr */
-    //const LUX (1e0) /* cd sr / m^2 */
-    //const PHOT (1e4) /* cd sr / m^2 */
-    //const FOOTCANDLE (1.076e1) /* cd sr / m^2 */
-    //const LAMBERT (1e4) /* cd sr / m^2 */
-    //const FOOTLAMBERT (1.07639104e1) /* cd sr / m^2 */
-    //const CURIE (3.7e10) /* 1 / s */
-    //const ROENTGEN (2.58e-4) /* A s / kg */
-    //const RAD (1e-2) /* m^2 / s^2 */
-    //const SOLAR_MASS (1.98892e30) /* kg */
-    //const BOHR_RADIUS (5.291772083e-11) /* m */
-    //const NEWTON (1e0) /* kg m / s^2 */
-    //const DYNE (1e-5) /* kg m / s^2 */
-    //const JOULE (1e0) /* kg m^2 / s^2 */
-    //const ERG (1e-7) /* kg m^2 / s^2 */
-    //const STEFAN_BOLTZMANN_CONSTANT (5.67040047374e-8) /* kg / K^4 s^3 */
-    //const THOMSON_CROSS_SECTION (6.65245893699e-29) /* m^2 */
-    //const BOHR_MAGNETON (9.27400899e-24) /* A m^2 */
-    //const NUCLEAR_MAGNETON (5.05078317e-27) /* A m^2 */
-    //const ELECTRON_MAGNETIC_MOMENT (9.28476362e-24) /* A m^2 */
-    //const PROTON_MAGNETIC_MOMENT (1.410606633e-26) /* A m^2 */
-    //const FARADAY (9.64853429775e4) /* A s / mol */
-    //const ELECTRON_CHARGE (1.602176487e-19) /* A s */
-    //const VACUUM_PERMITTIVITY (8.854187817e-12) /* A^2 s^4 / kg m^3 */
-    //const VACUUM_PERMEABILITY (1.25663706144e-6) /* kg m / A^2 s^2 */
-    //const DEBYE (3.33564095198e-30) /* A s^2 / m^2 */
-    //const GAUSS (1e-4) /* kg / A s^2 */
-}
-
-/// xxx
-pub type MksTuple<'a> = (Name, MksUnit, f64, &'a str);
-
-/// List of MKS units with dimentions and factors
-pub const UNITS: [MksTuple; 8] = [
-    (Name::SpeedOfLight,           SPEED_OF_LIGHT_UNIT,           f64::SPEED_OF_LIGHT,          "Speed of light"),
-    (Name::GravitationalConstant,  GRAVITATIONAL_CONSTANT_UNIT,   f64::GRAVITATIONAL_CONSTANT,  "Gravitational constant"),
-    (Name::PlancksConstantH,       PLANCKS_CONSTANT_H_UNIT,       f64::PLANCKS_CONSTANT_H,      "Planck's constant h"),
-    (Name::PlancksConstantHBar,    PLANCKS_CONSTANT_HBAR_UNIT,    f64::PLANCKS_CONSTANT_HBAR,   "Planck's constant h bar"),
-    (Name::AstronomicalUnit,       ASTRONOMICAL_UNIT_UNIT,        f64::ASTRONOMICAL_UNIT,       "Astronomical unit"),
-    (Name::LightYear,              LIGHT_YEAR_UNIT,               f64::LIGHT_YEAR,              "Light year"),
-    (Name::Parsec,                 PARSEC_UNIT,                   f64::PARSEC,                  "Parsec"),
-    //const GRAV_ACCEL:             f64 = (9.80665e0) /* m / s^2 */
-    //const ELECTRON_VOLT:          f64 = (1.602176487e-19) /* kg m^2 / s^2 */
-    //const MASS_ELECTRON:          f64 = (9.10938188e-31) /* kg */
-    //const MASS_MUON:              f64 = (1.88353109e-28) /* kg */
-    //const MASS_PROTON:            f64 = (1.67262158e-27) /* kg */
-    //const MASS_NEUTRON:           f64 = (1.67492716e-27) /* kg */
-    //const RYDBERG:                f64 = (2.17987196968e-18) /* kg m^2 / s^2 */
-    //const BOLTZMANN:              f64 = (1.3806504e-23) /* kg m^2 / K s^2 */
-    //const MOLAR_GAS:              f64 = (8.314472e0) /* kg m^2 / K mol s^2 */
-    //const STANDARD_GAS_VOLUME:    f64 = (2.2710981e-2) /* m^3 / mol */
-    //Name::Minute
-    //const HOUR:                   f64 = (3.6e3) /* s */
-    //const DAY:                    f64 = (8.64e4) /* s */
-    //const WEEK:                   f64 = (6.048e5) /* s */
-    //const INCH:                   f64 = (2.54e-2) /* m */
-    //const FOOT:                   f64 = (3.048e-1) /* m */
-    //const YARD:                   f64 = (9.144e-1) /* m */
-    //const MILE:                   f64 = (1.609344e3) /* m */
-    //const NAUTICAL_MILE: f64 = (1.852e3) /* m */
-    //const FATHOM: f64 = (1.8288e0) /* m */
-    //const MIL: f64 = (2.54e-5) /* m */
-    //const POINT: f64 = (3.52777777778e-4) /* m */
-    //const TEXPOINT: f64 = (3.51459803515e-4) /* m */
-    //const MICRON: f64 = (1e-6) /* m */
-    //const ANGSTROM: f64 = (1e-10) /* m */
-    //const HECTARE: f64 = (1e4) /* m^2 */
-    //const ACRE: f64 = (4.04685642241e3) /* m^2 */
-    //const BARN: f64 = (1e-28) /* m^2 */
-    //const LITER: f64 = (1e-3) /* m^3 */
-    //const US_GALLON: f64 = (3.78541178402e-3) /* m^3 */
-    //const QUART: f64 = (9.46352946004e-4) /* m^3 */
-    //const PINT: f64 = (4.73176473002e-4) /* m^3 */
-    //const CUP: f64 = (2.36588236501e-4) /* m^3 */
-    //const FLUID_OUNCE: f64 = (2.95735295626e-5) /* m^3 */
-    //const TABLESPOON: f64 = (1.47867647813e-5) /* m^3 */
-    //const TEASPOON: f64 = (4.92892159375e-6) /* m^3 */
-    //const CANADIAN_GALLON: f64 = (4.54609e-3) /* m^3 */
-    //const UK_GALLON: f64 = (4.546092e-3) /* m^3 */
-    //const MILES_PER_HOUR: f64 = (4.4704e-1) /* m / s */
-    (Name::KilometersPerHour, KILOMETERS_PER_HOUR_UNIT, f64::KILOMETERS_PER_HOUR, "km/h"),
-    //const KNOT: f64 = (5.14444444444e-1) /* m / s */
-    //const POUND_MASS: f64 = (4.5359237e-1) /* kg */
-    //const OUNCE_MASS: f64 = (2.8349523125e-2) /* kg */
-    //const TON: f64 = (9.0718474e2) /* kg */
-    //const METRIC_TON: f64 = (1e3) /* kg */
-    //const UK_TON: f64 = (1.0160469088e3) /* kg */
-    //const TROY_OUNCE: f64 = (3.1103475e-2) /* kg */
-    //const CARAT: f64 = (2e-4) /* kg */
-    //const UNIFIED_ATOMIC_MASS: f64 = (1.660538782e-27) /* kg */
-    //const GRAM_FORCE: f64 = (9.80665e-3) /* kg m / s^2 */
-    //const POUND_FORCE: f64 = (4.44822161526e0) /* kg m / s^2 */
-    //const KILOPOUND_FORCE: f64 = (4.44822161526e3) /* kg m / s^2 */
-    //const POUNDAL: f64 = (1.38255e-1) /* kg m / s^2 */
-    //const CALORIE: f64 = (4.1868e0) /* kg m^2 / s^2 */
-    //const BTU: f64 = (1.05505585262e3) /* kg m^2 / s^2 */
-    //const THERM: f64 = (1.05506e8) /* kg m^2 / s^2 */
-    //const HORSEPOWER: f64 = (7.457e2) /* kg m^2 / s^3 */
-    //const BAR: f64 = (1e5) /* kg / m s^2 */
-    //const STD_ATMOSPHERE: f64 = (1.01325e5) /* kg / m s^2 */
-    //const TORR: f64 = (1.33322368421e2) /* kg / m s^2 */
-    //const METER_OF_MERCURY: f64 = (1.33322368421e5) /* kg / m s^2 */
-    //const INCH_OF_MERCURY: f64 = (3.38638815789e3) /* kg / m s^2 */
-    //const INCH_OF_WATER: f64 = (2.490889e2) /* kg / m s^2 */
-    //const PSI (6.89475729317e3) /* kg / m s^2 */
-    //const POISE (1e-1) /* kg m^-1 s^-1 */
-    //const STOKES (1e-4) /* m^2 / s */
-    //const STILB (1e4) /* cd / m^2 */
-    //const LUMEN (1e0) /* cd sr */
-    //const LUX (1e0) /* cd sr / m^2 */
-    //const PHOT (1e4) /* cd sr / m^2 */
-    //const FOOTCANDLE (1.076e1) /* cd sr / m^2 */
-    //const LAMBERT (1e4) /* cd sr / m^2 */
-    //const FOOTLAMBERT (1.07639104e1) /* cd sr / m^2 */
-    //const CURIE (3.7e10) /* 1 / s */
-    //const ROENTGEN (2.58e-4) /* A s / kg */
-    //const RAD (1e-2) /* m^2 / s^2 */
-    //const SOLAR_MASS (1.98892e30) /* kg */
-    //const BOHR_RADIUS (5.291772083e-11) /* m */
-    //const NEWTON (1e0) /* kg m / s^2 */
-    //const DYNE (1e-5) /* kg m / s^2 */
-    //const JOULE (1e0) /* kg m^2 / s^2 */
-    //const ERG (1e-7) /* kg m^2 / s^2 */
-    //const STEFAN_BOLTZMANN_CONSTANT (5.67040047374e-8) /* kg / K^4 s^3 */
-    //const THOMSON_CROSS_SECTION (6.65245893699e-29) /* m^2 */
-    //const BOHR_MAGNETON (9.27400899e-24) /* A m^2 */
-    //const NUCLEAR_MAGNETON (5.05078317e-27) /* A m^2 */
-    //const ELECTRON_MAGNETIC_MOMENT (9.28476362e-24) /* A m^2 */
-    //const PROTON_MAGNETIC_MOMENT (1.410606633e-26) /* A m^2 */
-    //const FARADAY (9.64853429775e4) /* A s / mol */
-    //const ELECTRON_CHARGE (1.602176487e-19) /* A s */
-    //const VACUUM_PERMITTIVITY (8.854187817e-12) /* A^2 s^4 / kg m^3 */
-    //const VACUUM_PERMEABILITY (1.25663706144e-6) /* kg m / A^2 s^2 */
-    //const DEBYE (3.33564095198e-30) /* A s^2 / m^2 */
-    //const GAUSS (1e-4) /* kg / A s^2 */
-];
-
 /// Constant factors for MKS units
 pub trait Mks
 where
@@ -557,59 +328,112 @@ where
     const KNOT: Self;
     /// Kilogram
     const KILOGRAM: Self;
-    //const POUND_MASS: Self;
-    //const OUNCE_MASS: Self;
-    //const TON: Self;
-    //const METRIC_TON: Self;
-    //const UK_TON: Self;
-    //const TROY_OUNCE: Self;
-    //const CARAT: Self;
-    //const UNIFIED_ATOMIC_MASS: Self;
-    //const GRAM_FORCE: Self;
-    //const POUND_FORCE: Self;
-    //const KILOPOUND_FORCE: Self;
-    //const POUNDAL: Self;
-    //const CALORIE: Self;
-    //const BTU: Self;
-    //const THERM: Self;
-    //const HORSEPOWER: Self;
-    //const BAR: Self;
-    //const STD_ATMOSPHERE: Self;
-    //const TORR: Self;
-    //const METER_OF_MERCURY: Self;
-    //const INCH_OF_MERCURY: Self;
-    //const INCH_OF_WATER: Self;
-    //const PSI Self;
-    //const POISE Self;
-    //const STOKES Self;
-    //const STILB Self;
-    //const LUMEN Self;
-    //const LUX Self;
-    //const PHOT Self;
-    //const FOOTCANDLE Self;
-    //const LAMBERT Self;
-    //const FOOTLAMBERT Self;
-    //const CURIE Self;
-    //const ROENTGEN Self;
-    //const RAD Self;
-    //const SOLAR_MASS Self;
-    //const BOHR_RADIUS Self;
-    //const NEWTON Self;
-    //const DYNE Self;
-    //const JOULE Self;
-    //const ERG Self;
-    //const STEFAN_BOLTZMANN_CONSTANT Self;
-    //const THOMSON_CROSS_SECTION Self;
-    //const BOHR_MAGNETON Self;
-    //const NUCLEAR_MAGNETON Self;
-    //const ELECTRON_MAGNETIC_MOMENT Self;
-    //const PROTON_MAGNETIC_MOMENT Self;
-    //const FARADAY Self;
-    //const ELECTRON_CHARGE Self;
-    //const VACUUM_PERMITTIVITY Self;
-    //const VACUUM_PERMEABILITY Self;
-    //const DEBYE Self;
-    //const GAUSS Self;
+    /// Pound
+    const POUND_MASS: Self;
+    /// Ounce
+    const OUNCE_MASS: Self;
+    /// Ton
+    const TON: Self;
+    /// Metric ton
+    const METRIC_TON: Self;
+    /// UK ton
+    const UK_TON: Self;
+    /// Troy ounce
+    const TROY_OUNCE: Self;
+    /// Carat
+    const CARAT: Self;
+    /// Unified atomic mass
+    const UNIFIED_ATOMIC_MASS: Self;
+    /// Gram force
+    const GRAM_FORCE: Self;
+    /// Pound force
+    const POUND_FORCE: Self;
+    /// Kilopound force
+    const KILOPOUND_FORCE: Self;
+    /// Poundal
+    const POUNDAL: Self;
+    /// Calorie
+    const CALORIE: Self;
+    /// BTU
+    const BTU: Self;
+    /// Therm
+    const THERM: Self;
+    /// Horsepower
+    const HORSEPOWER: Self;
+    /// Bar
+    const BAR: Self;
+    /// STD atmosphere
+    const STD_ATMOSPHERE: Self;
+    /// Torr
+    const TORR: Self;
+    /// Meter of mercury
+    const METER_OF_MERCURY: Self;
+    /// Inch of mercury
+    const INCH_OF_MERCURY: Self;
+    /// Inch of water
+    const INCH_OF_WATER: Self;
+    /// PSI
+    const PSI: Self;
+    /// Poise
+    const POISE: Self;
+    /// Stokes
+    const STOKES: Self;
+    /// Stilb
+    const STILB: Self;
+    /// Lumen
+    const LUMEN: Self;
+    /// Lux
+    const LUX: Self;
+    /// Phot
+    const PHOT: Self;
+    /// Footcandle
+    const FOOTCANDLE: Self;
+    /// Lambert
+    const LAMBERT: Self;
+    /// Footlambert
+    const FOOTLAMBERT: Self;
+    /// Curie
+    const CURIE: Self;
+    /// Roentgen
+    const ROENTGEN: Self;
+    /// Rad
+    const RAD: Self;
+    /// Solar mass
+    const SOLAR_MASS: Self;
+    /// Bohr radius
+    const BOHR_RADIUS: Self;
+    /// Newton
+    const NEWTON: Self;
+    /// Dyne
+    const DYNE: Self;
+    /// Joule
+    const JOULE: Self;
+    /// Erg
+    const ERG: Self;
+    /// STEFAN_BOLTZMANN_CONSTANT
+    const STEFAN_BOLTZMANN_CONSTANT: Self;
+    /// THOMSON_CROSS_SECTION
+    const THOMSON_CROSS_SECTION: Self;
+    /// Bohr magneton
+    const BOHR_MAGNETON: Self;
+    /// Nuclear magneton
+    const NUCLEAR_MAGNETON: Self;
+    /// Electron magnetic moment
+    const ELECTRON_MAGNETIC_MOMENT: Self;
+    /// Proton magnetic moment
+    const PROTON_MAGNETIC_MOMENT: Self;
+    /// Faraday
+    const FARADAY: Self;
+    /// Electron charge
+    const ELECTRON_CHARGE: Self;
+    /// VACUUM_PERMITTIVITY
+    const VACUUM_PERMITTIVITY: Self;
+    /// VACUUM_PERMEABILITY
+    const VACUUM_PERMEABILITY: Self;
+    /// Debye
+    const DEBYE: Self;
+    /// Gauss
+    const GAUSS: Self;
 }
 
 impl Mks for f64 {
@@ -664,57 +488,57 @@ impl Mks for f64 {
     const KILOMETERS_PER_HOUR:      f64 = 2.77777777778e-1_f64; // m / s
     const KNOT:                     f64 = 5.14444444444e-1_f64; /* m / s */
     const KILOGRAM:                 f64 = 1.0_f64; // kg
-    //const POUND_MASS: f64 = (4.5359237e-1) /* kg */
-    //const OUNCE_MASS: f64 = (2.8349523125e-2) /* kg */
-    //const TON: f64 = (9.0718474e2) /* kg */
-    //const METRIC_TON: f64 = (1e3) /* kg */
-    //const UK_TON: f64 = (1.0160469088e3) /* kg */
-    //const TROY_OUNCE: f64 = (3.1103475e-2) /* kg */
-    //const CARAT: f64 = (2e-4) /* kg */
-    //const UNIFIED_ATOMIC_MASS: f64 = (1.660538782e-27) /* kg */
-    //const GRAM_FORCE: f64 = (9.80665e-3) /* kg m / s^2 */
-    //const POUND_FORCE: f64 = (4.44822161526e0) /* kg m / s^2 */
-    //const KILOPOUND_FORCE: f64 = (4.44822161526e3) /* kg m / s^2 */
-    //const POUNDAL: f64 = (1.38255e-1) /* kg m / s^2 */
-    //const CALORIE: f64 = (4.1868e0) /* kg m^2 / s^2 */
-    //const BTU: f64 = (1.05505585262e3) /* kg m^2 / s^2 */
-    //const THERM: f64 = (1.05506e8) /* kg m^2 / s^2 */
-    //const HORSEPOWER: f64 = (7.457e2) /* kg m^2 / s^3 */
-    //const BAR: f64 = (1e5) /* kg / m s^2 */
-    //const STD_ATMOSPHERE: f64 = (1.01325e5) /* kg / m s^2 */
-    //const TORR: f64 = (1.33322368421e2) /* kg / m s^2 */
-    //const METER_OF_MERCURY: f64 = (1.33322368421e5) /* kg / m s^2 */
-    //const INCH_OF_MERCURY: f64 = (3.38638815789e3) /* kg / m s^2 */
-    //const INCH_OF_WATER: f64 = (2.490889e2) /* kg / m s^2 */
-    //const PSI (6.89475729317e3) /* kg / m s^2 */
-    //const POISE (1e-1) /* kg m^-1 s^-1 */
-    //const STOKES (1e-4) /* m^2 / s */
-    //const STILB (1e4) /* cd / m^2 */
-    //const LUMEN (1e0) /* cd sr */
-    //const LUX (1e0) /* cd sr / m^2 */
-    //const PHOT (1e4) /* cd sr / m^2 */
-    //const FOOTCANDLE (1.076e1) /* cd sr / m^2 */
-    //const LAMBERT (1e4) /* cd sr / m^2 */
-    //const FOOTLAMBERT (1.07639104e1) /* cd sr / m^2 */
-    //const CURIE (3.7e10) /* 1 / s */
-    //const ROENTGEN (2.58e-4) /* A s / kg */
-    //const RAD (1e-2) /* m^2 / s^2 */
-    //const SOLAR_MASS (1.98892e30) /* kg */
-    //const BOHR_RADIUS (5.291772083e-11) /* m */
-    //const NEWTON (1e0) /* kg m / s^2 */
-    //const DYNE (1e-5) /* kg m / s^2 */
-    //const JOULE (1e0) /* kg m^2 / s^2 */
-    //const ERG (1e-7) /* kg m^2 / s^2 */
-    //const STEFAN_BOLTZMANN_CONSTANT (5.67040047374e-8) /* kg / K^4 s^3 */
-    //const THOMSON_CROSS_SECTION (6.65245893699e-29) /* m^2 */
-    //const BOHR_MAGNETON (9.27400899e-24) /* A m^2 */
-    //const NUCLEAR_MAGNETON (5.05078317e-27) /* A m^2 */
-    //const ELECTRON_MAGNETIC_MOMENT (9.28476362e-24) /* A m^2 */
-    //const PROTON_MAGNETIC_MOMENT (1.410606633e-26) /* A m^2 */
-    //const FARADAY (9.64853429775e4) /* A s / mol */
-    //const ELECTRON_CHARGE (1.602176487e-19) /* A s */
-    //const VACUUM_PERMITTIVITY (8.854187817e-12) /* A^2 s^4 / kg m^3 */
-    //const VACUUM_PERMEABILITY (1.25663706144e-6) /* kg m / A^2 s^2 */
-    //const DEBYE (3.33564095198e-30) /* A s^2 / m^2 */
-    //const GAUSS (1e-4) /* kg / A s^2 */
+    const POUND_MASS:               f64 = 4.5359237e-1_f64; /* kg */
+    const OUNCE_MASS:               f64 = 2.8349523125e-2_f64; /* kg */
+    const TON:                      f64 = 9.0718474e2_f64; /* kg */
+    const METRIC_TON:               f64 = 1e3_f64; /* kg */
+    const UK_TON:                   f64 = 1.0160469088e3_f64; /* kg */
+    const TROY_OUNCE:               f64 = 3.1103475e-2_f64; /* kg */
+    const CARAT:                    f64 = 2e-4_f64; /* kg */
+    const UNIFIED_ATOMIC_MASS:      f64 = 1.660538782e-27_f64; /* kg */
+    const GRAM_FORCE:               f64 = 9.80665e-3_f64; /* kg m / s^2 */
+    const POUND_FORCE:              f64 = 4.44822161526e0_f64; /* kg m / s^2 */
+    const KILOPOUND_FORCE:          f64 = 4.44822161526e3_f64; /* kg m / s^2 */
+    const POUNDAL:                  f64 = 1.38255e-1_f64; /* kg m / s^2 */
+    const CALORIE:                  f64 = 4.1868e0_f64; /* kg m^2 / s^2 */
+    const BTU:                      f64 = 1.05505585262e3_f64; /* kg m^2 / s^2 */
+    const THERM:                    f64 = 1.05506e8_f64; /* kg m^2 / s^2 */
+    const HORSEPOWER:               f64 = 7.457e2_f64; /* kg m^2 / s^3 */
+    const BAR:                      f64 = 1e5_f64; /* kg / m s^2 */
+    const STD_ATMOSPHERE:           f64 = 1.01325e5_f64; /* kg / m s^2 */
+    const TORR:                     f64 = 1.33322368421e2_f64; /* kg / m s^2 */
+    const METER_OF_MERCURY:         f64 = 1.33322368421e5_f64; /* kg / m s^2 */
+    const INCH_OF_MERCURY:          f64 = 3.38638815789e3_f64; /* kg / m s^2 */
+    const INCH_OF_WATER:            f64 = 2.490889e2_f64; /* kg / m s^2 */
+    const PSI:                      f64 = 6.89475729317e3_f64; /* kg / m s^2 */
+    const POISE:                    f64 = 1e-1_f64; /* kg m^-1 s^-1 */
+    const STOKES:                   f64 = 1e-4_f64; /* m^2 / s */
+    const STILB:                    f64 = 1e4_f64; /* cd / m^2 */
+    const LUMEN:                    f64 = 1e0_f64; /* cd sr */
+    const LUX:                      f64 = 1e0_f64; /* cd sr / m^2 */
+    const PHOT:                     f64 = 1e4_f64; /* cd sr / m^2 */
+    const FOOTCANDLE:               f64 = 1.076e1_f64; /* cd sr / m^2 */
+    const LAMBERT:                  f64 = 1e4_f64; /* cd sr / m^2 */
+    const FOOTLAMBERT:              f64 = 1.07639104e1_f64; /* cd sr / m^2 */
+    const CURIE:                    f64 = 3.7e10_f64; /* 1 / s */
+    const ROENTGEN:                 f64 = 2.58e-4_f64; /* A s / kg */
+    const RAD:                      f64 = 1e-2_f64; /* m^2 / s^2 */
+    const SOLAR_MASS:               f64 = 1.98892e30_f64; /* kg */
+    const BOHR_RADIUS:              f64 = 5.291772083e-11_f64; /* m */
+    const NEWTON:                   f64 = 1e0_f64; /* kg m / s^2 */
+    const DYNE:                     f64 = 1e-5_f64; /* kg m / s^2 */
+    const JOULE:                    f64 = 1e0_f64; /* kg m^2 / s^2 */
+    const ERG:                      f64 = 1e-7_f64; /* kg m^2 / s^2 */
+    const STEFAN_BOLTZMANN_CONSTANT:f64 = 5.67040047374e-8_f64; /* kg / K^4 s^3 */
+    const THOMSON_CROSS_SECTION:    f64 = 6.65245893699e-29_f64; /* m^2 */
+    const BOHR_MAGNETON:            f64 = 9.27400899e-24_f64; /* A m^2 */
+    const NUCLEAR_MAGNETON:         f64 = 5.05078317e-27_f64; /* A m^2 */
+    const ELECTRON_MAGNETIC_MOMENT: f64 = 9.28476362e-24_f64; /* A m^2 */
+    const PROTON_MAGNETIC_MOMENT:   f64 = 1.410606633e-26_f64; /* A m^2 */
+    const FARADAY:                  f64 = 9.64853429775e4_f64; /* A s / mol */
+    const ELECTRON_CHARGE:          f64 = 1.602176487e-19_f64; /* A s */
+    const VACUUM_PERMITTIVITY:      f64 = 8.854187817e-12_f64; /* A^2 s^4 / kg m^3 */
+    const VACUUM_PERMEABILITY:      f64 = 1.25663706144e-6_f64; /* kg m / A^2 s^2 */
+    const DEBYE:                    f64 = 3.33564095198e-30_f64; /* A s^2 / m^2 */
+    const GAUSS:                    f64 = 1e-4_f64; /* kg / A s^2 */
 }
