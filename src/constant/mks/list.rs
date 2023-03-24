@@ -89,19 +89,25 @@ pub enum Name {
     /// Quart
     Quart,
     /// Pint
-    Pint
+    Pint,
     /// Cup
     Cup,
-
-    //const FLUID_OUNCE: f64 = (2.95735295626e-5) /* m^3 */
-    //const TABLESPOON: f64 = (1.47867647813e-5) /* m^3 */
-    //const TEASPOON: f64 = (4.92892159375e-6) /* m^3 */
-    //const CANADIAN_GALLON: f64 = (4.54609e-3) /* m^3 */
-    //const UK_GALLON: f64 = (4.546092e-3) /* m^3 */
-    //const MILES_PER_HOUR: f64 = (4.4704e-1) /* m / s */
+    /// Fluid ounce
+    FluidOunce,
+    /// Tablespoon
+    Tablespoon,
+    /// Teaspoon,
+    Teaspoon,
+    /// Canadian gallon
+    CanadianGallon,
+    /// UK gallon
+    UkGallon,
+    /// miles/h
+    MilesPerHour,
     /// km/h
     KilometersPerHour,
-    //const KNOT: f64 = (5.14444444444e-1) /* m / s */
+    /// Knot
+    Knot,
     /// kg
     Kilogram,
     //const POUND_MASS: f64 = (4.5359237e-1) /* kg */
