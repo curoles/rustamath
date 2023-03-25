@@ -95,4 +95,20 @@ impl TnsrOrder {
         }
         n
     }
+
+    // Change major
+    //pub fn change_major(&mut self, to_col_major: bool) {
+    //    self.val_pos = if to_col_major {TnsrOrder::col_major_2d} else {TnsrOrder::row_major_2d};
+    //}
+}
+
+/// View at Tnsr.
+///
+/// View allow to change how external viewer sees the tensor
+/// without changing the tensor internal structure.
+///
+#[derive(Copy, Clone)]
+pub struct TnsrView {
+    /// Transposed
+    pub transposed: bool,
 }

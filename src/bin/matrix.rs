@@ -10,9 +10,23 @@ use rustamath::la::tnsr::{Tnsr, Matrix};
 
 fn main() {
 
-    let mx_a = &mut Tnsr::<f64>::new_matrix(8, 10) as &mut dyn Matrix::<f64>;
+    let mx_a = &mut Tnsr::<f64>::new_matrix(4, 2) as &mut dyn Matrix::<f64>;
 
-    mx_a.set(0, 0, 1.1).set(0, 1, 2.2e12);
+    mx_a.set(0, 0, 1.1).set(0, 1, 2.2e12).set(1, 0, 3.3).set(1, 1, 4.4);
+    mx_a.set(2, 0, 5.5).set(2, 1, 6.6e12).set(3, 0, 7.7).set(3, 1, 8.8);
 
-    println!("print1: {:?}", mx_a);
+    println!("{:?}", mx_a);
+
+    let mx_at = mx_a.make_transposed();
+
+    println!("transposed\n{:?}", mx_at);
+
+    assert!(mx_a.is_transpose(&mx_at));
+
+    mx_a.transpose_view();
+    println!("transposed view\n{:?}", mx_a);
+
+    mx_a.set(0, 3, 9.9);
+    mx_a.transpose_view();
+    println!("back to normal view\n{:?}", mx_a);
 }

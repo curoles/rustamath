@@ -3,15 +3,13 @@
 //! (c) 2013 Igor Lesik
 //! MIT license
 //!
-use num_traits::float;
 use std::fmt;
+use super::{TnsrValType};
 
 /// Vector as 1D Tensor
 pub trait Vector<T>
 where
-    T: float::Float,
-    T: std::fmt::Display,
-    T: std::fmt::LowerExp
+    T: TnsrValType
 {
     /// For fmt::Debug and pretty printing
     fn fmt_vector(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result;

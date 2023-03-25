@@ -3,15 +3,12 @@
 //! (c) 2013 Igor Lesik
 //! MIT license
 //!
-use num_traits::float;
 use std::fmt;
-use super::{Tnsr, Tensor};
+use super::{Tnsr, TnsrValType, Tensor};
 
 impl<T> Tensor<T> for Tnsr<T>
 where
-    T: float::Float,
-    T: std::fmt::Display,
-    T: std::fmt::LowerExp
+    T: TnsrValType
 {
     fn fmt_tensor(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "todo tensor")

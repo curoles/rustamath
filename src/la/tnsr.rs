@@ -5,7 +5,7 @@ use num_traits::float;
 use crate::simd;
 
 mod order;
-pub use self::order::{TnsrOrderType, TnsrOrder};
+pub use self::order::{TnsrOrderType, TnsrOrder, TnsrView};
 
 mod trait_tensor;
 pub use self::trait_tensor::{Tensor};
@@ -22,25 +22,32 @@ mod vector;
 #[cfg(test)]
 mod tests;
 
+/// All traits that value must implement
+pub trait TnsrValType: float::Float
+    + std::fmt::Display
+    + std::fmt::LowerExp
+    {}
+impl<T: float::Float
+    + std::fmt::Display
+    + std::fmt::LowerExp> TnsrValType for T {} // blanket implementation
+
+
 /// N-dimentional Tensor structure
 pub struct Tnsr<T>
 where
-    T: float::Float,
-    T: std::fmt::Display,
-    T: std::fmt::LowerExp
+    T: TnsrValType
 {
     /// Data storage `Vec<T>`
     pub v: std::vec::Vec<T>,
     nr_dims: usize,
     sizes: std::vec::Vec<usize>,
-    order: TnsrOrder
+    order: TnsrOrder,
+    view: TnsrView,
 }
 
 impl<T> Tnsr<T>
 where
-    T: float::Float,
-    T: std::fmt::Display,
-    T: std::fmt::LowerExp
+    T: TnsrValType
 {
     /// Create new vector
     ///
@@ -60,6 +67,7 @@ where
             nr_dims : 1,
             sizes: vec![size],
             order: TnsrOrder::new(TnsrOrderType::RowMajor, 1),
+            view: TnsrView {transposed: false},
         };
         t.v.resize(size, T::neg_zero());
         t
@@ -72,6 +80,7 @@ where
             nr_dims : 2,
             sizes: vec![nr_rows, nr_cols],
             order: TnsrOrder::new(TnsrOrderType::RowMajor, 2),
+            view: TnsrView {transposed: false},
         };
         t.v.resize(nr_rows*nr_cols, T::neg_zero());
         t
@@ -94,6 +103,7 @@ where
             nr_dims : sizes.len(),
             sizes: Vec::from(sizes),
             order: TnsrOrder::new(TnsrOrderType::RowMajor, sizes.len()),
+            view: TnsrView {transposed: false},
         }
     }
 
@@ -112,9 +122,7 @@ use std::fmt;
 
 impl<T> fmt::Debug for Tnsr<T>
 where
-    T: float::Float,
-    T: std::fmt::Display,
-    T: std::fmt::LowerExp
+    T: TnsrValType
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.nr_dims {
@@ -122,5 +130,21 @@ where
             2 => self.fmt_matrix(f),
             _ => self.fmt_tensor(f),
         }
+    }
+}
+
+impl<T> std::clone::Clone for Tnsr<T>
+where
+    T: TnsrValType
+{
+    fn clone(&self) -> Self {
+        let mut new_tensor = match self.nr_dims {
+            1 => Tnsr::<T>::new_vector(self.sizes[0]),
+            2 => Tnsr::<T>::new_matrix(self.sizes[0], self.sizes[1]),
+            _ => Tnsr::<T>::new_tensor(&self.sizes),
+        };
+        new_tensor.v.copy_from_slice(&self.v);
+        new_tensor.view = self.view;
+        new_tensor
     }
 }
