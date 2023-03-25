@@ -8,7 +8,10 @@ use std::fmt;
 
 /// N-dimentional Tensor
 pub trait Tensor<T>
-    where T: float::Float
+where
+    T: float::Float,
+    T: std::fmt::Display,
+    T: std::fmt::LowerExp
 {
     /// For fmt::Debug and pretty printing
     fn fmt_tensor(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result;

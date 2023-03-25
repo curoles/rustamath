@@ -9,7 +9,10 @@ use super::{Tnsr, Vector};
 use crate::simd;
 
 impl<T> Vector<T> for Tnsr<T>
-    where T: float::Float
+where
+    T: float::Float,
+    T: std::fmt::Display,
+    T: std::fmt::LowerExp
 {
     fn fmt_vector(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "todo vector")

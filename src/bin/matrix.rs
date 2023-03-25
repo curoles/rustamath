@@ -10,8 +10,9 @@ use rustamath::la::tnsr::{Tnsr, Matrix};
 
 fn main() {
 
-    let m = &Tnsr::<f64>::new_matrix(4, 3) as &dyn Matrix::<f64>;
+    let mx_a = &mut Tnsr::<f64>::new_matrix(8, 10) as &mut dyn Matrix::<f64>;
 
-    println!("print1: {:?}", m);
-    println!("print2: {:#?}", m);
+    mx_a.set(0, 0, 1.1).set(0, 1, 2.2e12);
+
+    println!("print1: {:?}", mx_a);
 }

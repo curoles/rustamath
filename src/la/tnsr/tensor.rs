@@ -8,7 +8,10 @@ use std::fmt;
 use super::{Tnsr, Tensor};
 
 impl<T> Tensor<T> for Tnsr<T>
-    where T: float::Float
+where
+    T: float::Float,
+    T: std::fmt::Display,
+    T: std::fmt::LowerExp
 {
     fn fmt_tensor(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "todo tensor")

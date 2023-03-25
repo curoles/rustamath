@@ -24,7 +24,10 @@ mod tests;
 
 /// N-dimentional Tensor structure
 pub struct Tnsr<T>
-    where T: float::Float
+where
+    T: float::Float,
+    T: std::fmt::Display,
+    T: std::fmt::LowerExp
 {
     /// Data storage `Vec<T>`
     pub v: std::vec::Vec<T>,
@@ -34,7 +37,10 @@ pub struct Tnsr<T>
 }
 
 impl<T> Tnsr<T>
-    where T: float::Float
+where
+    T: float::Float,
+    T: std::fmt::Display,
+    T: std::fmt::LowerExp
 {
     /// Create new vector
     ///
@@ -61,12 +67,14 @@ impl<T> Tnsr<T>
 
     /// Create new matrix
     pub fn new_matrix(nr_rows: usize, nr_cols: usize) -> Self {
-        Tnsr {
+        let mut t = Tnsr {
             v : simd::vec::new(nr_rows*nr_cols),
             nr_dims : 2,
             sizes: vec![nr_rows, nr_cols],
             order: TnsrOrder::new(TnsrOrderType::RowMajor, 2),
-        }
+        };
+        t.v.resize(nr_rows*nr_cols, T::neg_zero());
+        t
     }
 
     /* perhaps SparseTnsr struct; Create new sparse matrix
@@ -103,7 +111,10 @@ impl<T> Tnsr<T>
 use std::fmt;
 
 impl<T> fmt::Debug for Tnsr<T>
-    where T: float::Float
+where
+    T: float::Float,
+    T: std::fmt::Display,
+    T: std::fmt::LowerExp
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.nr_dims {
