@@ -29,4 +29,10 @@ fn main() {
     mx_a.set(0, 3, 9.9);
     mx_a.transpose_view();
     println!("back to normal view\n{:?}", mx_a);
+
+    let mx_b = &mut Tnsr::<f64>::new_matrix(2, 2) as &mut dyn Matrix::<f64>;
+    mx_b.set(0, 0, 1.1).set(0, 1, 2.2).set(1, 0, 3.3).set(1, 1, 4.4);
+    println!("b\n{:?}", mx_b);
+    mx_b.transpose();
+    println!("hard transposed\n{:?}", mx_b);
 }

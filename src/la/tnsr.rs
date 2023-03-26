@@ -24,10 +24,12 @@ mod tests;
 
 /// All traits that value must implement
 pub trait TnsrValType: float::Float
+    + std::fmt::Debug
     + std::fmt::Display
     + std::fmt::LowerExp
     {}
 impl<T: float::Float
+    + std::fmt::Debug
     + std::fmt::Display
     + std::fmt::LowerExp> TnsrValType for T {} // blanket implementation
 

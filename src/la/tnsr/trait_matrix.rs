@@ -39,5 +39,5 @@ where
     fn transpose_view(&mut self);
 
     /// Transpose matrix in place, `C = Aᵀ => c(i,j)=a(j,i)`
-    fn transpose(&self);
+    fn transpose(&mut self);
 }

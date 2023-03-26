@@ -5,6 +5,7 @@
 //!
 use std::fmt;
 use super::{Tnsr, TnsrValType, Matrix};
+mod transpose;
 
 impl<T> fmt::Debug for dyn Matrix<T>
 where
@@ -62,7 +63,7 @@ where
 
     /// Clone
     fn clone(&self) -> Tnsr<T> {
-        Clone::clone(&self)
+        Clone::clone(self)
     }
 
     /// Get value at (row,col)
@@ -151,8 +152,11 @@ where
     /// <https://en.wikipedia.org/wiki/In-place_matrix_transposition>
     /// <https://dl.acm.org/doi/pdf/10.1145/355611.355612>
     /// <https://www3.nd.edu/~shu/research/papers/ipdps01.pdf>
-    fn transpose(&self) {
-        //
+    fn transpose(&mut self) {
+        use self::transpose::transpose_square;
+        if self.nr_rows() == self.nr_cols() {
+            transpose_square(self as &mut dyn Matrix::<T>);
+        }
     }
 
 }
