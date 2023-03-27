@@ -30,9 +30,15 @@ fn main() {
     mx_a.transpose_view();
     println!("back to normal view\n{:?}", mx_a);
 
-    let mx_b = &mut Tnsr::<f64>::new_matrix(2, 2) as &mut dyn Matrix::<f64>;
-    mx_b.set(0, 0, 1.1).set(0, 1, 2.2).set(1, 0, 3.3).set(1, 1, 4.4);
+    let mx_b = &mut Tnsr::<f64>::new_matrix(5, 2) as &mut dyn Matrix::<f64>;
+    mx_b.set(0, 0, 1.1).set(0, 1, 2.2);
+    mx_b.set(1, 0, 3.3).set(1, 1, 4.4);
+    mx_b.set(2, 0, 5.5).set(2, 1, 6.6);
+    mx_b.set(3, 0, 7.7).set(3, 1, 8.8);
+    mx_b.set(4, 0, 9.0).set(4, 1, 0.1);
     println!("b\n{:?}", mx_b);
+    let mx_c = mx_b.clone();
     mx_b.transpose();
     println!("hard transposed\n{:?}", mx_b);
+    assert!(mx_b.is_transpose(&mx_c));
 }

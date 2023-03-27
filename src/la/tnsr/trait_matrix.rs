@@ -17,6 +17,9 @@ where
     /// Clone
     fn clone(&self) -> Tnsr<T>;
 
+    /// Get position in internal storage
+    fn get_raw_pos(&self, row: usize, col: usize) -> usize;
+
     /// Get value at (row,col)
     fn get(&self, row: usize, col: usize) -> T;
 

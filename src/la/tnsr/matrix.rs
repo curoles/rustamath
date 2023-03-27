@@ -66,6 +66,11 @@ where
         Clone::clone(self)
     }
 
+    /// Get position in internal storage
+    fn get_raw_pos(&self, row: usize, col: usize) -> usize {
+        (self.order.val_pos)(&self.order, &[row, col], &self.sizes)
+    }
+
     /// Get value at (row,col)
     /// FIXME TODO check bounds and return Option/Result
     fn get(&self, row: usize, col: usize) -> T {
@@ -150,12 +155,13 @@ where
     /// Transpose matrix in place, C = Aᵀ => c(i,j)=a(j,i).
     ///
     /// <https://en.wikipedia.org/wiki/In-place_matrix_transposition>
-    /// <https://dl.acm.org/doi/pdf/10.1145/355611.355612>
-    /// <https://www3.nd.edu/~shu/research/papers/ipdps01.pdf>
     fn transpose(&mut self) {
-        use self::transpose::transpose_square;
+        use self::transpose::{transpose_square, transpose_in_place};
         if self.nr_rows() == self.nr_cols() {
             transpose_square(self as &mut dyn Matrix::<T>);
+        }
+        else {
+            transpose_in_place(self);
         }
     }
 
