@@ -1,4 +1,5 @@
-//! Matrix trait
+//! Matrix which can be transposed via changing view
+//! w/o changing internal representation.
 //!
 //! (c) 2013 Igor Lesik
 //! MIT license
@@ -6,8 +7,9 @@
 use std::fmt;
 use super::{Tnsr, TnsrValType};
 
-/// Matrix as 2D Tensor
-pub trait Matrix<T>
+/// Matrix which can be transposed via changing view
+/// w/o changing internal representation.
+pub trait TranspMatrix<T>
 where
     T: TnsrValType
 {
@@ -24,7 +26,7 @@ where
     fn get(&self, row: usize, col: usize) -> T;
 
     /// Set value at (row,col)
-    fn set(&mut self, row: usize, col: usize, val: T) -> &mut dyn Matrix<T>;
+    fn set(&mut self, row: usize, col: usize, val: T) -> &mut dyn TranspMatrix<T>;
 
     /// Get number of rows
     fn nr_rows(&self) -> usize;
@@ -38,7 +40,7 @@ where
     /// Return transposed matrix, `C = Aᵀ => c(i,j)=a(j,i)`
     fn make_transposed(&self) -> Tnsr<T>;
 
-    /// Transpose matrix in place, `C = Aᵀ => c(i,j)=a(j,i)`
+    /// Transpose view w/o changing internal representation
     fn transpose(&mut self);
 
     /// Matrix addition `C = A + B => c(i,j) = a(i,j) + b(i,j)`

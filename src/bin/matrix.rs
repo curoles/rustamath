@@ -6,7 +6,7 @@
 
 //use inquire::{Text, validator::{StringValidator, Validation}};
 //use inquire::{CustomType, validator::Validation};
-use rustamath::la::tnsr::{Tnsr, Matrix};
+use rustamath::la::tnsr::{Tnsr, Matrix, TranspMatrix};
 
 fn main() {
 
@@ -23,12 +23,13 @@ fn main() {
 
     assert!(mx_a.is_transpose(&mx_at));
 
-    mx_a.transpose_view();
-    println!("transposed view\n{:?}", mx_a);
+    let mx_d = &mut mx_a.raw_tensor().clone() as &mut dyn TranspMatrix::<f64>;
+    mx_d.transpose();
+    println!("transposed view\n{:?}", mx_d);
 
-    mx_a.set(0, 3, 9.9);
-    mx_a.transpose_view();
-    println!("back to normal view\n{:?}", mx_a);
+    mx_d.set(0, 3, 9.9);
+    mx_d.transpose();
+    println!("back to normal view\n{:?}", mx_d);
 
     let mx_b = &mut Tnsr::<f64>::new_matrix(5, 2) as &mut dyn Matrix::<f64>;
     mx_b.set(0, 0, 1.1).set(0, 1, 2.2);
@@ -37,7 +38,7 @@ fn main() {
     mx_b.set(3, 0, 7.7).set(3, 1, 8.8);
     mx_b.set(4, 0, 9.0).set(4, 1, 0.1);
     println!("b\n{:?}", mx_b);
-    let mx_c = mx_b.clone();
+    let mx_c = mx_b.raw_tensor().clone();
     mx_b.transpose();
     println!("hard transposed\n{:?}", mx_b);
     assert!(mx_b.is_transpose(&mx_c));

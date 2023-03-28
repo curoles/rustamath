@@ -1,14 +1,13 @@
-//! Matrix
+//! Matrix which can be transposed via changing view
+//! w/o changing internal representation.
 //!
 //! (c) 2013 Igor Lesik
 //! MIT license
 //!
 use std::fmt;
-use crate::simd;
-use super::{Tnsr, TnsrValType, Matrix};
-mod transpose;
+use super::{Tnsr, TnsrValType, TranspMatrix};
 
-impl<T> fmt::Debug for dyn Matrix<T>
+impl<T> fmt::Debug for dyn TranspMatrix<T>
 where
     T: TnsrValType
 {
@@ -18,7 +17,7 @@ where
     }
 }
 
-impl<T> Matrix<T> for Tnsr<T>
+impl<T> TranspMatrix<T> for Tnsr<T>
 where
     T: TnsrValType
 {
@@ -69,7 +68,9 @@ where
 
     /// Get position in internal storage
     fn get_raw_pos(&self, row: usize, col: usize) -> usize {
-        (self.order.val_pos)(&self.order, &[row, col], &self.sizes)
+        let rowt = if self.view.transposed {col} else {row};
+        let colt = if self.view.transposed {row} else {col};
+        (self.order.val_pos)(&self.order, &[rowt, colt], &self.sizes)
     }
 
     /// Get value at (row,col)
@@ -79,7 +80,7 @@ where
     }
 
     /// Set value at (row,col)
-    fn set(&mut self, row: usize, col: usize, val: T) -> &mut dyn Matrix<T> {
+    fn set(&mut self, row: usize, col: usize, val: T) -> &mut dyn TranspMatrix<T> {
         let pos = self.get_raw_pos(row, col);
         self.v[pos] = val;
         self
@@ -87,12 +88,12 @@ where
 
     /// Get number of rows
     fn nr_rows(&self) -> usize {
-        self.sizes[0]
+        self.sizes[if self.view.transposed {1} else {0}]
     }
 
     /// Get number of columns
     fn nr_cols(&self) -> usize {
-        self.sizes[1]
+        self.sizes[if self.view.transposed {0} else {1}]
     }
 
     /// Return true if other matrix is transposition to this matrix
@@ -100,8 +101,8 @@ where
     /// # Example
     ///
     /// ```
-    /// use rustamath::la::tnsr::{Tnsr, Matrix};
-    /// let mx_a = &mut Tnsr::<f64>::new_matrix(4, 2) as &mut dyn Matrix::<f64>;
+    /// use rustamath::la::tnsr::{Tnsr, TranspMatrix};
+    /// let mx_a = &mut Tnsr::<f64>::new_matrix(4, 2) as &mut dyn TranspMatrix::<f64>;
     /// mx_a.set(0, 0, 1.1).set(0, 1, 2.2).set(1, 0, 3.3).set(1, 1, 4.4);
     /// mx_a.set(2, 0, 5.5).set(2, 1, 6.6).set(3, 0, 7.7).set(3, 1, 8.8);
     /// let mx_at = mx_a.make_transposed();
@@ -132,26 +133,33 @@ where
         at
     }
 
-    /// Transpose matrix in place, C = Aᵀ => c(i,j)=a(j,i).
+    /// Transpose view w/o changing internal representation
     ///
-    /// <https://en.wikipedia.org/wiki/In-place_matrix_transposition>
+    /// # Example
+    ///
+    /// ```
+    /// use rustamath::la::tnsr::{Tnsr, TranspMatrix};
+    /// let mut tz_a = Tnsr::<f64>::new_matrix(4, 2);
+    /// let mx_a = &mut tz_a as &mut dyn TranspMatrix::<f64>;
+    /// mx_a.set(0, 0, 1.1).set(0, 1, 2.2).set(1, 0, 3.3).set(1, 1, 4.4);
+    /// mx_a.set(2, 0, 5.5).set(2, 1, 6.6).set(3, 0, 7.7).set(3, 1, 8.8);
+    /// let mx_b = mx_a.raw_tensor().clone();
+    /// mx_a.transpose();
+    /// assert!(mx_a.is_transpose(&mx_b));
+    /// ```
     fn transpose(&mut self) {
-        use self::transpose::{transpose_square, transpose_in_place};
-        if self.nr_rows() == self.nr_cols() {
-            transpose_square(self as &mut dyn Matrix::<T>);
-        }
-        else {
-            transpose_in_place(self);
-        }
+        self.view.transposed = !self.view.transposed;
     }
 
     /// Matrix addition `C = A + B => c(i,j) = a(i,j) + b(i,j)`
     fn add(&mut self, rhs: &Tnsr<T>) /*-> Result if sizes diff*/ {
         assert!(self.nr_dims == rhs.nr_dims);
         assert!(self.nr_rows() == rhs.nr_rows() && self.nr_cols() == rhs.nr_cols());
-        //TODO if view.transposed
-        //if triangle/symmetric/hermitian
-        //else
-        simd::vec::add(&mut self.v, &rhs.raw_tensor().v);
+
+        for i in 0..self.nr_rows() {
+            for j in 0..self.nr_cols() {
+                self.set(i, j, rhs.get(i, j));//FIXME get() depends on flavor
+            }
+        }
     }
 }

@@ -15,6 +15,10 @@ mod trait_matrix;
 pub use self::trait_matrix::{Matrix};
 mod matrix;
 
+mod trait_transp_matrix;
+pub use self::trait_transp_matrix::{TranspMatrix};
+mod transp_matrix;
+
 mod trait_vector;
 pub use self::trait_vector::{Vector};
 mod vector;
@@ -115,7 +119,7 @@ where
     }
 
     /// Get raw std::vec::Vec vector mut ref
-    pub fn mraw(&mut self) -> &mut std::vec::Vec::<T> {
+    pub fn mut_raw(&mut self) -> &mut std::vec::Vec::<T> {
         &mut self.v
     }
 }
@@ -129,7 +133,7 @@ where
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.nr_dims {
             1 => self.fmt_vector(f),
-            2 => self.fmt_matrix(f),
+            2 => Matrix::fmt_matrix(self, f),
             _ => self.fmt_tensor(f),
         }
     }

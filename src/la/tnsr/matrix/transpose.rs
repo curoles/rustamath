@@ -15,7 +15,7 @@ use super::super::{Tnsr, TnsrValType, Matrix};
 /// mx_a.set(0, 0, 1.1).set(0, 1, 2.2).set(0, 2, 3.3);
 /// mx_a.set(1, 0, 4.4).set(1, 1, 5.5).set(1, 2, 6.6);
 /// mx_a.set(2, 0, 7.7).set(2, 1, 8.8).set(2, 2, 9.9);
-/// let mx_b = mx_a.clone();
+/// let mx_b = mx_a.raw_tensor().clone();
 /// mx_a.transpose();
 /// assert!(mx_a.is_transpose(&mx_b));
 /// ```
@@ -49,7 +49,7 @@ pub fn transpose_square<T: TnsrValType>(a: &mut dyn Matrix<T>) {
 /// mx_a.set(2, 0, 5.5).set(2, 1, 6.6);
 /// mx_a.set(3, 0, 7.7).set(3, 1, 8.8);
 /// mx_a.set(4, 0, 9.0).set(4, 1, 0.1);
-/// let mx_b = mx_a.clone();
+/// let mx_b = mx_a.raw_tensor().clone();
 /// mx_a.transpose();
 /// assert!(mx_a.is_transpose(&mx_b));
 /// ```
@@ -105,7 +105,7 @@ fn test_transpose_in_place() {
                     a.set(row, col, (0.1+row as f64) + (0.2+col as f64)/123.4);
                 }
             }
-            let b = a.clone();
+            let b = a.raw_tensor().clone();
             a.transpose();
             assert!(a.is_transpose(&b));
         }

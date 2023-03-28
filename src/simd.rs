@@ -37,9 +37,9 @@ pub mod vec {
 
     /// add all elements of 2 vectors
     #[inline] pub fn add<T>(a: &mut[T], b: &[T])
-        where T: std::ops::Add<Output = T>,
-              T: Copy,
-              //T: std::simd::SimdElement
+    where T: std::ops::Add<Output = T>,
+            T: Copy,
+            //T: std::simd::SimdElement
     {
         #[cfg(simd_arch = "x86_avx2")]
         avx2::add(a, b);
@@ -49,9 +49,9 @@ pub mod vec {
 
     /// Function `a[i] -> a[i]^2`
     #[inline] pub fn pow2<T>(a: &mut[T])
-        where T: std::ops::Mul<Output = T>,
-              T: Copy,
-              //T: std::simd::SimdElement
+    where T: std::ops::Mul<Output = T>,
+            T: Copy,
+            //T: std::simd::SimdElement
     {
         #[cfg(simd_arch = "x86_avx2")]
         avx2::pow2(a);
@@ -62,10 +62,10 @@ pub mod vec {
 
     /// `sqrt( sum(a[i]^2) )`
     #[inline] pub fn norm<T>(a: &[T]) -> T
-        where T: std::ops::Mul<Output = T>,
-              //T: std::ops::AddAssign,
-              T: float::Float,
-              //T: std::simd::SimdElement
+    where T: std::ops::Mul<Output = T>,
+            //T: std::ops::AddAssign,
+            T: float::Float,
+            //T: std::simd::SimdElement
     {
         #[cfg(simd_arch = "x86_avx2")]
         return avx2::norm(a);
