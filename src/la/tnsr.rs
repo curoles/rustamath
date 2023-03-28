@@ -26,13 +26,30 @@ mod vector;
 #[cfg(test)]
 mod tests;
 
+/// Common errors
+#[derive(Debug)]
+pub enum TnsrErr {
+    /// Unexpected number of tensor dimentions
+    IllegalNrDimentions {
+        /// Expected number of dimentions
+        expect: usize,
+        /// Actual number of dimentions
+        nr_dims: usize},
+    /// Mismatching tensor dimenstions during operation
+    DimentionsMismatch,
+}
+
 /// All traits that value must implement
 pub trait TnsrValType: float::Float
+    + Default
+    + std::ops::AddAssign
     + std::fmt::Debug
     + std::fmt::Display
     + std::fmt::LowerExp
     {}
 impl<T: float::Float
+    + Default
+    + std::ops::AddAssign
     + std::fmt::Debug
     + std::fmt::Display
     + std::fmt::LowerExp> TnsrValType for T {} // blanket implementation

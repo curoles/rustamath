@@ -5,7 +5,7 @@
 //!
 use std::fmt;
 use crate::simd;
-use super::{Tnsr, TnsrValType, Matrix};
+use super::{Tnsr, TnsrValType, TnsrErr, Matrix};
 mod transpose;
 
 impl<T> fmt::Debug for dyn Matrix<T>
@@ -146,12 +146,72 @@ where
     }
 
     /// Matrix addition `C = A + B => c(i,j) = a(i,j) + b(i,j)`
-    fn add(&mut self, rhs: &Tnsr<T>) /*-> Result if sizes diff*/ {
-        assert!(self.nr_dims == rhs.nr_dims);
-        assert!(self.nr_rows() == rhs.nr_rows() && self.nr_cols() == rhs.nr_cols());
+    fn add(&mut self, rhs: &Tnsr<T>) -> Result<(), TnsrErr> {
+        if self.nr_dims != 2 {
+            return Err(TnsrErr::IllegalNrDimentions{expect: 2, nr_dims: self.nr_dims});
+        }
+        if rhs.nr_dims != 2 {
+            return Err(TnsrErr::IllegalNrDimentions{expect: 2, nr_dims: rhs.nr_dims});
+        }
+        if self.nr_rows() != rhs.nr_rows() || self.nr_cols() != rhs.nr_cols() {
+            return Err(TnsrErr::DimentionsMismatch);
+        }
         //TODO if view.transposed
         //if triangle/symmetric/hermitian
         //else
         simd::vec::add(&mut self.v, &rhs.raw_tensor().v);
+        Ok(())
+    }
+
+    /// Scalar-matrix multiplication `C = αA => c(i,j) = αa(i,j)`
+    fn scale(&mut self, factor: T) {
+        //self.v.iter_mut().for_each(|x| *x = *x * factor);
+        for val in &mut self.v {
+            *val = *val * factor;
+        }
+    }
+
+    /// Matrix-matrix multiplication
+    ///
+    /// `Rm×p × Rp×n → Rm×n`,
+    /// `C = AB => c(i,j) = ∑ a(i,k)b(k,j)`
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rustamath::la::tnsr::{Tnsr, TnsrErr, Matrix};
+    /// let mx_a = &mut Tnsr::<f64>::new_matrix(4, 2) as &mut dyn Matrix::<f64>;
+    /// mx_a.set(0, 0, 1.1).set(0, 1, 2.2).set(1, 0, 3.3).set(1, 1, 4.4);
+    /// mx_a.set(2, 0, 5.5).set(2, 1, 6.6).set(3, 0, 7.7).set(3, 1, 8.8);
+    /// let mx_b = mx_a.make_transposed();
+    /// let mx_c = &mx_a.mul(&mx_b)? as &dyn Matrix::<f64>;
+    /// assert!(mx_c.nr_rows() == 4 && mx_c.nr_cols() == 4);
+    /// assert!(mx_c.get(3, 3) == 7.7*7.7 + 8.8*8.8);
+    /// # Ok::<(), TnsrErr>(())
+    /// ```
+    fn mul(&self, rhs: &Tnsr<T>) -> Result<Tnsr<T>, TnsrErr> {
+        if self.nr_dims != 2 {
+            return Err(TnsrErr::IllegalNrDimentions{expect: 2, nr_dims: self.nr_dims});
+        }
+        if rhs.nr_dims != 2 {
+            return Err(TnsrErr::IllegalNrDimentions{expect: 2, nr_dims: rhs.nr_dims});
+        }
+        if self.nr_cols() != rhs.nr_rows() {
+            return Err(TnsrErr::DimentionsMismatch);
+        }
+        //TODO if view.transposed
+        //if triangle/symmetric/hermitian
+        //else
+        let mut a_x_b = Tnsr::<T>::new_matrix(self.nr_rows(), rhs.nr_cols());
+        for r in 0..self.nr_rows() {
+            for c in 0..rhs.nr_cols() {
+                let mut sum_products: T = T::default();
+                for k in 0..self.nr_cols() {
+                    sum_products += self.get(r, k) * rhs.get(k, c);
+                }
+                a_x_b.set(r, c, sum_products);
+            }
+        }
+        Ok(a_x_b)
     }
 }

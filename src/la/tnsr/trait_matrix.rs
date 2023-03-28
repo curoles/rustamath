@@ -4,7 +4,7 @@
 //! MIT license
 //!
 use std::fmt;
-use super::{Tnsr, TnsrValType};
+use super::{Tnsr, TnsrValType, TnsrErr};
 
 /// Matrix as 2D Tensor
 pub trait Matrix<T>
@@ -42,5 +42,14 @@ where
     fn transpose(&mut self);
 
     /// Matrix addition `C = A + B => c(i,j) = a(i,j) + b(i,j)`
-    fn add(&mut self, rhs: &Tnsr<T>) /*-> Result if sizes diff*/;
+    fn add(&mut self, rhs: &Tnsr<T>) -> Result<(), TnsrErr>;
+
+    /// Scalar-matrix multiplication `C = αA => c(i,j) = αa(i,j)`
+    fn scale(&mut self, factor: T);
+
+    /// Matrix-matrix multiplication
+    ///
+    /// `Rm×p × Rp×n → Rm×n`,
+    /// `C = AB => c(i,j) = ∑ a(i,k)b(k,j)`
+    fn mul(&self, rhs: &Tnsr<T>) -> Result<Tnsr<T>, TnsrErr>;
 }
