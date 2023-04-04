@@ -222,7 +222,7 @@ pub enum Name {
 pub type MksTuple<'a> = (Name, MksUnit, f64, &'a str);
 
 /// List of MKS units with dimentions and factors
-pub const UNITS: [MksTuple; 13] = [
+pub const UNITS: [MksTuple; 20] = [
     (Name::SpeedOfLight,           SPEED_OF_LIGHT_UNIT,           f64::SPEED_OF_LIGHT,          "Speed of light"),
     (Name::GravitationalConstant,  GRAVITATIONAL_CONSTANT_UNIT,   f64::GRAVITATIONAL_CONSTANT,  "Gravitational constant"),
     (Name::PlancksConstantH,       PLANCKS_CONSTANT_H_UNIT,       f64::PLANCKS_CONSTANT_H,      "Planck's constant h"),
@@ -235,98 +235,98 @@ pub const UNITS: [MksTuple; 13] = [
     (Name::MassElectron,           MASS_ELECTRON_UNIT,            f64::MASS_ELECTRON,           "Mass of electron"),
     (Name::MassMuon,               MASS_MUON_UNIT,                f64::MASS_MUON,               "Mass of muon"),
     (Name::MassProton,             MASS_PROTON_UNIT,              f64::MASS_PROTON,             "Mass of proton"),
-    //(Name:: MASS_NEUTRON
-    //(Name:: RYDBERG
-    //(Name:: BOLTZMANN
-    //(Name:: MOLAR_GAS
-    //(Name:: STANDARD_GAS_VOLUME
-    //(Name::Second
-    //(Name::Minute
-    //(Name:: HOUR
-    //(Name:: DAY
-    //(Name:: WEEK
-    //(Name::Meter
-    //(Name:: INCH
-    //(Name:: FOOT
-    //(Name:: YARD
-    //(Name:: MILE
-    //(Name:: NAUTICAL_MILE
-    //(Name:: FATHOM
-    //(Name:: MIL
-    //(Name:: POINT
-    //(Name:: TEXPOINT
-    //(Name:: MICRON
-    //(Name:: ANGSTROM
-    //(Name:: HECTARE
-    //(Name:: ACRE
-    //(Name:: BARN
-    //(Name:: LITER
-    //(Name:: US_GALLON
-    //(Name:: QUART
-    //(Name:: PINT
-    //(Name:: CUP
-    //(Name:: FLUID_OUNCE
-    //(Name:: TABLESPOON
-    //(Name:: TEASPOON
-    //(Name:: CANADIAN_GALLON
-    //(Name:: UK_GALLON
-    //(Name:: MILES_PER_HOUR
+    (Name::MassNeutron,            MASS_NEUTRON_UNIT,             f64::MASS_NEUTRON,            "Mass of neutron"),
+    (Name::Rydberg,                RYDBERG_UNIT,                  f64::RYDBERG,                 "Rydberg"),
+    (Name::Boltzmann,              BOLTZMANN_UNIT,                f64::BOLTZMANN,               "Boltzmann"),
+    (Name::MolarGas,               MOLAR_GAS_UNIT,                f64::MOLAR_GAS,               "Molar gas"),
+    (Name::StandardGasVolume,      STANDARD_GAS_VOLUME_UNIT,      f64::STANDARD_GAS_VOLUME,     "Standard gas volume"),
+    (Name::Second,                 SECOND_UNIT,                   f64::SECOND,                  "Second"),
+    (Name::Minute,                 MINUTE_UNIT,                   f64::MINUTE,                  "Minute"),
+    //(Name:: HOUR                 UNIT,              f64::,         ""),
+    //(Name:: DAY,                 UNIT,              f64::,         ""),
+    //(Name:: WEEK                 UNIT,              f64::,         ""),
+    //(Name::Meter,                UNIT,              f64::,         ""),
+    //(Name:: INCH,                UNIT,              f64::,         ""),
+    //(Name:: FOOT                 UNIT,              f64::,         ""),
+    //(Name:: YARD                 UNIT,              f64::,         ""),
+    //(Name:: MILE,                UNIT,              f64::,         ""),
+    //(Name:: NAUTICAL_MILE,       UNIT,              f64::,         ""),
+    //(Name:: FATHOM,              UNIT,              f64::,         ""),
+    //(Name:: MIL,                 UNIT,              f64::,         ""),
+    //(Name:: POINT,               UNIT,              f64::,         ""),
+    //(Name:: TEXPOINT,            UNIT,              f64::,         ""),
+    //(Name:: MICRON,              UNIT,              f64::,         ""),
+    //(Name:: ANGSTROM,            UNIT,              f64::,         ""),
+    //(Name:: HECTARE,             UNIT,              f64::,         ""),
+    //(Name:: ACRE,                UNIT,              f64::,         ""),
+    //(Name:: BARN,                UNIT,              f64::,         ""),
+    //(Name:: LITER,               UNIT,              f64::,         ""),
+    //(Name:: US_GALLON,           UNIT,              f64::,         ""),
+    //(Name:: QUART,               UNIT,              f64::,         ""),
+    //(Name:: PINT,                UNIT,              f64::,         ""),
+    //(Name:: CUP,                 UNIT,              f64::,         ""),
+    //(Name:: FLUID_OUNCE,         UNIT,              f64::,         ""),
+    //(Name:: TABLESPOON,          UNIT,              f64::,         ""),
+    //(Name:: TEASPOON,            UNIT,              f64::,         ""),
+    //(Name:: CANADIAN_GALLON,     UNIT,              f64::,         ""),
+    //(Name:: UK_GALLON,           UNIT,              f64::,         ""),
+    //(Name:: MILES_PER_HOUR,      UNIT,              f64::,         ""),
     (Name::KilometersPerHour, KILOMETERS_PER_HOUR_UNIT, f64::KILOMETERS_PER_HOUR, "km/h"),
-    //(Name:: KNOT
-    //(Name::Kilogram
-    //(Name:: POUND_MASS
-    //(Name:: OUNCE_MASS
-    //(Name:: TON
-    //(Name:: METRIC_TON
-    //(Name:: UK_TON
-    //(Name:: TROY_OUNCE
-    //(Name:: CARAT
-    //(Name:: UNIFIED_ATOMIC_MASS
-    //(Name:: GRAM_FORCE
-    //(Name:: POUND_FORCE
-    //(Name:: KILOPOUND_FORCE
-    //(Name:: POUNDAL
-    //(Name:: CALORIE
-    //(Name:: BTU
-    //(Name:: THERM
-    //(Name:: HORSEPOWER
-    //(Name:: BAR
-    //(Name:: STD_ATMOSPHERE
-    //(Name:: TORR
-    //(Name:: METER_OF_MERCURY
-    //(Name:: INCH_OF_MERCURY
-    //(Name:: INCH_OF_WATER
-    //(Name:: PSI
-    //(Name:: POISE
-    //(Name:: STOKES
-    //(Name:: STILB
-    //(Name:: LUMEN
-    //(Name:: LUX
-    //(Name:: PHOT
-    //(Name:: FOOTCANDLE
-    //(Name:: LAMBERT
-    //(Name:: FOOTLAMBERT
-    //(Name:: CURIE
-    //(Name:: ROENTGEN
-    //(Name:: RAD
-    //(Name:: SOLAR_MASS
-    //(Name:: BOHR_RADIUS
-    //(Name:: NEWTON
-    //(Name:: DYNE
-    //(Name:: JOULE
-    //(Name:: ERG
-    //(Name:: STEFAN_BOLTZMANN_CONSTANT
-    //(Name:: THOMSON_CROSS_SECTION
-    //(Name:: BOHR_MAGNETON
-    //(Name:: NUCLEAR_MAGNETON
-    //(Name:: ELECTRON_MAGNETIC_MOMENT
-    //(Name:: PROTON_MAGNETIC_MOMENT
-    //(Name:: FARADAY
-    //(Name:: ELECTRON_CHARGE
-    //(Name:: VACUUM_PERMITTIVITY
-    //(Name:: VACUUM_PERMEABILITY
-    //(Name:: DEBYE
-    //(Name:: GAUSS
+    //(Name:: KNOT,                UNIT,              f64::,         ""),
+    //(Name::Kilogram,             UNIT,              f64::,         ""),
+    //(Name:: POUND_MASS,          UNIT,              f64::,         ""),
+    //(Name:: OUNCE_MASS,          UNIT,              f64::,         ""),
+    //(Name:: TON,                 UNIT,              f64::,         ""),
+    //(Name:: METRIC_TON,          UNIT,              f64::,         ""),
+    //(Name:: UK_TON,              UNIT,              f64::,         ""),
+    //(Name:: TROY_OUNCE,          UNIT,              f64::,         ""),
+    //(Name:: CARAT,               UNIT,              f64::,         ""),
+    //(Name:: UNIFIED_ATOMIC_MASS, UNIT,              f64::,         ""),
+    //(Name:: GRAM_FORCE,          UNIT,              f64::,         ""),
+    //(Name:: POUND_FORCE,         UNIT,              f64::,         ""),
+    //(Name:: KILOPOUND_FORCE,     UNIT,              f64::,         ""),
+    //(Name:: POUNDAL,             UNIT,              f64::,         ""),
+    //(Name:: CALORIE,             UNIT,              f64::,         ""),
+    //(Name:: BTU,                 UNIT,              f64::,         ""),
+    //(Name:: THERM,               UNIT,              f64::,         ""),
+    //(Name:: HORSEPOWER,          UNIT,              f64::,         ""),
+    //(Name:: BAR,                 UNIT,              f64::,         ""),
+    //(Name:: STD_ATMOSPHERE,      UNIT,              f64::,         ""),
+    //(Name:: TORR,                UNIT,              f64::,         ""),
+    //(Name:: METER_OF_MERCURY,    UNIT,              f64::,         ""),
+    //(Name:: INCH_OF_MERCURY,     UNIT,              f64::,         ""),
+    //(Name:: INCH_OF_WATER,       UNIT,              f64::,         ""),
+    //(Name:: PSI,       UNIT,              f64::,         ""),
+    //(Name:: POISE,       UNIT,              f64::,         ""),
+    //(Name:: STOKES,       UNIT,              f64::,         ""),
+    //(Name:: STILB,       UNIT,              f64::,         ""),
+    //(Name:: LUMEN,       UNIT,              f64::,         ""),
+    //(Name:: LUX,       UNIT,              f64::,         ""),
+    //(Name:: PHOT,       UNIT,              f64::,         ""),
+    //(Name:: FOOTCANDLE,       UNIT,              f64::,         ""),
+    //(Name:: LAMBERT,       UNIT,              f64::,         ""),
+    //(Name:: FOOTLAMBERT,       UNIT,              f64::,         ""),
+    //(Name:: CURIE,       UNIT,              f64::,         ""),
+    //(Name:: ROENTGEN,       UNIT,              f64::,         ""),
+    //(Name:: RAD,       UNIT,              f64::,         ""),
+    //(Name:: SOLAR_MASS,       UNIT,              f64::,         ""),
+    //(Name:: BOHR_RADIUS,       UNIT,              f64::,         ""),
+    //(Name:: NEWTON,       UNIT,              f64::,         ""),
+    //(Name:: DYNE,       UNIT,              f64::,         ""),
+    //(Name:: JOULE,       UNIT,              f64::,         ""),
+    //(Name:: ERG,       UNIT,              f64::,         ""),
+    //(Name:: STEFAN_BOLTZMANN_CONSTANT,       UNIT,              f64::,         ""),
+    //(Name:: THOMSON_CROSS_SECTION,       UNIT,              f64::,         ""),
+    //(Name:: BOHR_MAGNETON,       UNIT,              f64::,         ""),
+    //(Name:: NUCLEAR_MAGNETON,       UNIT,              f64::,         ""),
+    //(Name:: ELECTRON_MAGNETIC_MOMENT,       UNIT,              f64::,         ""),
+    //(Name:: PROTON_MAGNETIC_MOMENT,       UNIT,              f64::,         ""),
+    //(Name:: FARADAY,       UNIT,              f64::,         ""),
+    //(Name:: ELECTRON_CHARGE,       UNIT,              f64::,         ""),
+    //(Name:: VACUUM_PERMITTIVITY,       UNIT,              f64::,         ""),
+    //(Name:: VACUUM_PERMEABILITY,       UNIT,              f64::,         ""),
+    //(Name:: DEBYE,       UNIT,              f64::,         ""),
+    //(Name:: GAUSS,       UNIT,              f64::,         ""),
     ];
 
 

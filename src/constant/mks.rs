@@ -6,6 +6,7 @@
 //! References:
 //! - <https://github.com/ampl/gsl/blob/master/const/gsl_const_mks.h>
 //!
+use std::fmt;
 
 pub mod list;
 
@@ -63,6 +64,59 @@ impl std::ops::Div for MksUnit {
             s: self.s - rhs.s,
             a: self.a - rhs.a
         }
+    }
+}
+
+impl MksUnit {
+    /// Return unit string representation.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rustamath::constant::mks::*;
+    /// assert_eq!(&VACUUM_PERMITTIVITY_UNIT.as_string(), "s^4 A^2 / m^3 kg");
+    /// assert_eq!(&VACUUM_PERMITTIVITY_UNIT.to_string(), "[s^4 A^2 / m^3 kg]");
+    /// ```
+    pub fn as_string(&self) -> String {
+        let mut s = String::new();
+        let has_pos_powers = self.m > 0 || self.k > 0 || self.s > 0 || self.a > 0;
+        let has_neg_powers = self.m < 0 || self.k < 0 || self.s < 0 || self.a < 0;
+
+        if !has_pos_powers && !has_neg_powers { return s; }
+
+        fn make_power(p: i8, name: &str, count: usize) -> String {
+            let mut ps = String::from(name);
+            if count > 0 { ps.insert(0, ' '); }
+            if p > 1 { ps.push('^'); ps.push_str(&p.to_string()); }
+            ps
+        }
+
+        if has_pos_powers {
+            let mut count: usize = 0;
+            if self.m > 0 { s.push_str(&make_power(self.m, "m" , count)); count += 1; }
+            if self.k > 0 { s.push_str(&make_power(self.k, "kg", count)); count += 1; }
+            if self.s > 0 { s.push_str(&make_power(self.s, "s" , count)); count += 1; }
+            if self.a > 0 { s.push_str(&make_power(self.a, "A" , count)); }
+        }
+        else {
+            s.push('1');
+        }
+
+        if has_neg_powers {
+            s.push_str(" / ");
+            let mut count: usize = 0;
+            if self.m < 0 { s.push_str(&make_power(-self.m, "m" , count)); count += 1; }
+            if self.k < 0 { s.push_str(&make_power(-self.k, "kg", count)); count += 1; }
+            if self.s < 0 { s.push_str(&make_power(-self.s, "s" , count)); count += 1; }
+            if self.a < 0 { s.push_str(&make_power(-self.a, "A" , count)); }
+        }
+        s
+    }
+}
+
+impl fmt::Display for MksUnit {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "[{}]", &self.as_string())
     }
 }
 
@@ -188,12 +242,18 @@ pub const UNIFIED_ATOMIC_MASS_UNIT:    MksUnit = MksUnit {m:  0, k:  1, s:  0, a
 pub const GRAM_FORCE_UNIT:             MksUnit = MksUnit {m:  1, k:  1, s: -2, a:  0}; // kg m / s^2
 /// Pound force
 pub const POUND_FORCE_UNIT:            MksUnit = MksUnit {m:  1, k:  1, s: -2, a:  0}; // kg m / s^2
-//pub const KILOPOUND_FORCE_UNIT:      MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / s^2 */
-//pub const POUNDAL_UNIT:              MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m / s^2 */
-//pub const CALORIE_UNIT:                MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
-//pub const BTU_UNIT:                    MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
-//pub const THERM_UNIT:                  MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^2 */
-//pub const HORSEPOWER_UNIT:             MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  0}; /* kg m^2 / s^3 */
+/// Kilopound force
+pub const KILOPOUND_FORCE_UNIT:        MksUnit = MksUnit {m:  1, k:  1, s: -2, a:  0}; // kg m / s^2
+/// Poundal
+pub const POUNDAL_UNIT:                MksUnit = MksUnit {m:  1, k:  1, s: -2, a:  0}; // kg m / s^2
+/// Calorie
+pub const CALORIE_UNIT:                MksUnit = MksUnit {m:  2, k:  1, s: -2, a:  0}; // kg m^2 / s^2
+/// Btu
+pub const BTU_UNIT:                    MksUnit = MksUnit {m:  2, k:  1, s: -2, a:  0}; // kg m^2 / s^2
+/// Therm
+pub const THERM_UNIT:                  MksUnit = MksUnit {m:  2, k:  1, s: -2, a:  0}; // kg m^2 / s^2
+/// Horsepower
+pub const HORSEPOWER_UNIT:             MksUnit = MksUnit {m:  2, k:  1, s: -3, a:  0}; // kg m^2 / s^3
 /// Bar
 pub const BAR_UNIT:                    MksUnit = MksUnit {m: -1, k:  1, s: -2, a:  0}; // kg / m s^2
 /// Std atmosphere
@@ -272,7 +332,7 @@ pub const GAUSS_UNIT:                  MksUnit = MksUnit {m:  0, k:  1, s: -2, a
 pub const AMPERE_UNIT:                 MksUnit = MksUnit {m:  0, k:  0, s:  0, a:  1}; // A
 
 
-/// Constant factors for MKS units
+/// Constant factors for MKS constants and units.
 pub trait Mks
 where
     Self: Copy,
