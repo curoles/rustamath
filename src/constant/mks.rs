@@ -1,7 +1,19 @@
-//! MKS constants
+//! MKS constants for physical constants and units of measure.
 //!
 //! (c) 2023 Igor Lesik
 //! MIT license
+//!
+//! This crate procides:
+//!
+//! - Physical constants, such as the speed of light, `c`, and gravitational constant, `G`.
+//!   The values are available in the standard MKSA unit system (meters, kilograms, seconds, amperes).
+//!   For example: `let half_speed_of_light = f64::SPEED_OF_LIGHT / 2.0;`.
+//! - MKS unit type, for  example: `assert_eq!(SPEED_OF_LIGHT_UNIT * SECOND_UNIT, LIGHT_YEAR_UNIT);`.
+//! - Unit as a string, for example: `assert_eq!(&SPEED_OF_LIGHT_UNIT.to_string(), "[m / s]");`.
+//! - Values with units attached, for example:
+//!   `let pendulum_len = MksVal::new(6.0, f64::FOOT, FOOT_UNIT);`.
+//! - Operations on values, for example:
+//!   `let pendulum_len_over_accel = pendulum_len / g;`.
 //!
 //! References:
 //! - <https://github.com/ampl/gsl/blob/master/const/gsl_const_mks.h>
@@ -13,7 +25,16 @@ pub mod list;
 mod value;
 pub use self::value::{MksVal};
 
-/// MKS unit as tuple of integer powers/dimentions (meter, kg, sec, ampere)
+/// MKS unit as tuple of integer powers/dimentions (meter, kg, sec, ampere).
+///
+/// # Example
+///
+/// ```
+/// use rustamath::constant::mks::*;
+/// assert_eq!(SPEED_OF_LIGHT_UNIT * SECOND_UNIT, LIGHT_YEAR_UNIT);
+/// assert_eq!(&SPEED_OF_LIGHT_UNIT.to_string(), "[m / s]");
+/// let _half_speed_of_light = 0.5_f64.to_units(f64::SPEED_OF_LIGHT);
+/// ```
 #[derive(Debug, Copy, Clone)]
 pub struct MksUnit {
     m: i8, k: i8, s: i8, a: i8
@@ -120,7 +141,16 @@ impl fmt::Display for MksUnit {
     }
 }
 
-/// Speed of light [m/s]
+/// Speed of light [m / s]
+///
+/// # Example
+///
+/// ```
+/// use rustamath::constant::mks::*;
+/// assert_eq!(SPEED_OF_LIGHT_UNIT * SECOND_UNIT, LIGHT_YEAR_UNIT);
+/// assert_eq!(&SPEED_OF_LIGHT_UNIT.to_string(), "[m / s]");
+/// let _half_speed_of_light = 0.5_f64.to_units(f64::SPEED_OF_LIGHT);
+/// ```
 pub const SPEED_OF_LIGHT_UNIT:         MksUnit = MksUnit {m:  1, k:  0, s: -1, a:  0}; // m / s
 /// Gravitational constant
 pub const GRAVITATIONAL_CONSTANT_UNIT: MksUnit = MksUnit {m:  3, k: -1, s: -2, a:  0}; // m^3 / kg s^2
@@ -134,6 +164,8 @@ pub const ASTRONOMICAL_UNIT_UNIT:      MksUnit = MksUnit {m:  1, k:  0, s:  0, a
 pub const LIGHT_YEAR_UNIT:             MksUnit = MksUnit {m:  1, k:  0, s:  0, a:  0}; // m
 /// Parsec
 pub const PARSEC_UNIT:                 MksUnit = MksUnit {m:  1, k:  0, s:  0, a:  0}; // m
+/// Acceleration unit
+pub const ACCEL_UNIT:                  MksUnit = MksUnit {m:  1, k:  0, s: -2, a:  0}; // m / s^2
 /// Acceleration due to gravity on Earth
 pub const GRAV_ACCEL_UNIT:             MksUnit = MksUnit {m:  1, k:  0, s: -2, a:  0}; // m / s^2
 /// Electron Volt
@@ -154,6 +186,8 @@ pub const BOLTZMANN_UNIT:              MksUnit = MksUnit {m:  2, k:  1, s: -2, a
 pub const MOLAR_GAS_UNIT:              MksUnit = MksUnit {m:  2, k:  1, s: -2, a:  0}; // kg m^2 / K mol s^2
 /// Standard gas volume
 pub const STANDARD_GAS_VOLUME_UNIT:    MksUnit = MksUnit {m:  3, k:  0, s:  0, a:  0}; // m^3 / mol
+/// Time unit
+pub const TIME_UNIT:                   MksUnit = MksUnit {m:  0, k:  0, s:  1, a:  0}; // s
 /// One second of time
 pub const SECOND_UNIT:                 MksUnit = MksUnit {m:  0, k:  0, s:  1, a:  0}; // s
 /// One minute of time
@@ -214,6 +248,8 @@ pub const TEASPOON_UNIT:               MksUnit = MksUnit {m:  3, k:  0, s:  0, a
 pub const CANADIAN_GALLON_UNIT:        MksUnit = MksUnit {m:  3, k:  0, s:  0, a:  0}; // m^3
 /// UK gallon
 pub const UK_GALLON_UNIT:              MksUnit = MksUnit {m:  3, k:  0, s:  0, a:  0}; // m^3
+/// Velocity unit
+pub const VELOCITY_UNIT:               MksUnit = MksUnit {m:  1, k:  0, s: -1, a:  0}; // m / s
 /// miles/h
 pub const MILES_PER_HOUR_UNIT:         MksUnit = MksUnit {m:  1, k:  0, s: -1, a:  0}; // m / s
 /// km/h dimentions is [m/s]
@@ -287,7 +323,7 @@ pub const LAMBERT_UNIT:                MksUnit = MksUnit {m: -2, k:  0, s:  0, a
 /// Footlambert
 pub const FOOTLAMBERT_UNIT:            MksUnit = MksUnit {m: -2, k:  0, s:  0, a:  0}; // cd sr / m^2
 /// Curie
-pub const CURIE:                       MksUnit = MksUnit {m:  0, k:  0, s: -1, a:  0}; // 1 / s
+pub const CURIE_UNIT:                  MksUnit = MksUnit {m:  0, k:  0, s: -1, a:  0}; // 1 / s
 /// Roentgen
 pub const ROENTGEN_UNIT:               MksUnit = MksUnit {m:  0, k: -1, s:  1, a:  1}; // A s / kg
 /// Rad
@@ -333,6 +369,19 @@ pub const AMPERE_UNIT:                 MksUnit = MksUnit {m:  0, k:  0, s:  0, a
 
 
 /// Constant factors for MKS constants and units.
+///
+/// Physical constants, such as the speed of light, `c`, and gravitational constant, `G`.
+/// The values are available in the standard MKSA unit system (meters, kilograms, seconds, amperes).
+///
+/// # Example
+///
+/// ```
+/// use rustamath::constant::mks::*;
+/// use assert_float_eq::*;
+/// assert_float_absolute_eq!(
+///     1.0_f64.to_units(f64::SPEED_OF_LIGHT).in_units(f64::KILOMETERS_PER_HOUR),
+///     1.079e9_f64, 1.0e6);
+/// ```
 pub trait Mks
 where
     Self: Copy,
