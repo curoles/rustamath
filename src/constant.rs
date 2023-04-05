@@ -1,8 +1,5 @@
-//! Physics and other constants.
+//! Physical and other constants.
 //!
 //! (c) Igor Lesik 2023
 //! MIT license
 //!
-
-pub mod scale;
-pub mod mks;

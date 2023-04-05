@@ -1193,6 +1193,14 @@ dependencies = [
  "num-traits",
  "plotters",
  "rand",
+ "rustamath_mks",
+]
+
+[[package]]
+name = "rustamath_mks"
+version = "0.1.0"
+dependencies = [
+ "assert_float_eq",
 ]
 
 [[package]]

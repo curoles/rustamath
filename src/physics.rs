@@ -9,7 +9,7 @@
 pub mod mechanics {
     /// Equations of linear motion in classical mechanics.
     pub mod linear_motion {
-        use crate::constant::mks::*;
+        use rustamath_mks::*;
 
         /// Velocity equation
         pub struct VelocityEquation {
