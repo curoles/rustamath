@@ -4,3 +4,4 @@
 //! MIT license
 //!
 pub mod circle;
+pub mod rectangle;

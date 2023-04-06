@@ -16,6 +16,9 @@ pub mod mechanics;
 mod equations;
 pub use self::equations::{EQUATIONS};
 
+mod regression;
+pub use self::regression::find_equation;
+
 /// Equation parameters
 pub struct EqParams<const NR_OUT: usize, const NR_CONST: usize, const NR_IN: usize> {
     /// Output params
@@ -76,7 +79,9 @@ pub fn find_equation_by_units(inputs: &[MksUnit], outputs: &[MksUnit]) -> Vec<us
 /// ```
 /// use rustamath::physics::*;
 /// if let Some(eq_index) = get_equation_by_typeid(figure::circle::CirclePerimeter::params) {
-///    assert_eq!(eq_index, 0);
+///    // assert_eq!(eq_index, 0);
+///    let mut equation = (EQUATIONS[eq_index].new)(&[]);
+///    assert_eq!(equation.run(&[10.0])[0], 2.0 * std::f64::consts::PI * 10.0);
 /// }
 /// ```
 #[allow(clippy::fn_address_comparisons)]
