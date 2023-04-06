@@ -20,7 +20,15 @@ pub struct BuildTuple<'a> {
 }
 
 /// List/array of all equations.
-pub const EQUATIONS: [BuildTuple; 4] = [
+pub const EQUATIONS: [BuildTuple; 6] = [
+    BuildTuple {
+        desc:   "Circumference of circle `C = 2*Pi*r`",
+        params: figure::circle::CirclePerimeter::params,
+        new:    figure::circle::CirclePerimeter::make},
+    BuildTuple {
+        desc:   "Area of circle `A = Pi*r^2`",
+        params: figure::circle::CircleArea::params,
+        new:    figure::circle::CircleArea::make},
     BuildTuple {
         desc:   "Linear motion const accel velocity `v = v0 + a*t`",
         params: mechanics::linear_motion::const_accel::VelocityEquation::params,

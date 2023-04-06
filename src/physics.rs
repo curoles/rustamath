@@ -10,6 +10,7 @@
 //!
 use rustamath_mks::MksUnit;
 
+pub mod figure;
 pub mod mechanics;
 
 mod equations;
@@ -64,4 +65,26 @@ pub fn find_equation_by_units(inputs: &[MksUnit], outputs: &[MksUnit]) -> Vec<us
         }
     }
     eqs
+}
+
+/// Get index of equation in the list by (almost) any::TypeId.
+///
+/// TypeId::of is not stable const, for now we find index by function params() address.
+///
+/// # Example
+///
+/// ```
+/// use rustamath::physics::*;
+/// if let Some(eq_index) = get_equation_by_typeid(figure::circle::CirclePerimeter::params) {
+///    assert_eq!(eq_index, 0);
+/// }
+/// ```
+#[allow(clippy::fn_address_comparisons)]
+pub fn get_equation_by_typeid(typeid: fn () -> ParamsUnit) -> Option<usize> {
+    for (index, eq) in EQUATIONS.iter().enumerate() {
+        if typeid == eq.params {
+            return Some(index);
+        }
+    }
+    None
 }
