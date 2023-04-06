@@ -8,7 +8,7 @@
 //! - <https://en.wikipedia.org/wiki/List_of_equations_in_classical_mechanics>
 //!
 use rustamath_mks::*;
-use super::super::super::{EqParams, Equation, EquationMaker};
+use super::super::super::{EqParams, Equation, EquationMaker, ParamsUnit};
 
 /// Velocity formula parameters type
 pub const VELOCITY_EQ_PARAMS: EqParams<1, 2, 1> = EqParams {
@@ -79,7 +79,7 @@ impl EquationMaker for VelocityEquation {
     /// assert!(params.0 == &[VELOCITY_UNIT]);
     /// assert!(params.1 == &[VELOCITY_UNIT, ACCEL_UNIT]);
     /// ```
-    fn params() -> (&'static [MksUnit], &'static [MksUnit], &'static [MksUnit]) {
+    fn params() -> ParamsUnit {
         (&Self::PARAMS.out, &Self::PARAMS.cns, &Self::PARAMS.inp)
     }
 
@@ -176,7 +176,7 @@ impl EquationMaker for VelocityByDistEquation {
     /// assert!(params.0 == &[VELOCITY_UNIT]);
     /// assert!(params.2 == &[DISTANCE_UNIT]);
     /// ```
-    fn params() -> (&'static [MksUnit], &'static [MksUnit], &'static [MksUnit]) {
+    fn params() -> ParamsUnit {
         (&Self::PARAMS.out, &Self::PARAMS.cns, &Self::PARAMS.inp)
     }
 
@@ -274,7 +274,7 @@ impl EquationMaker for DistanceEquation {
     /// assert!(params.0 == &[DISTANCE_UNIT]);
     /// assert!(params.1 == &[VELOCITY_UNIT, ACCEL_UNIT]);
     /// ```
-    fn params() -> (&'static [MksUnit], &'static [MksUnit], &'static [MksUnit]) {
+    fn params() -> ParamsUnit {
         (&Self::PARAMS.out, &Self::PARAMS.cns, &Self::PARAMS.inp)
     }
 
@@ -372,7 +372,7 @@ impl EquationMaker for DistanceByVelEquation {
     /// assert!(params.0 == &[DISTANCE_UNIT]);
     /// assert!(params.1 == &[VELOCITY_UNIT, VELOCITY_UNIT]);
     /// ```
-    fn params() -> (&'static [MksUnit], &'static [MksUnit], &'static [MksUnit]) {
+    fn params() -> ParamsUnit {
         (&Self::PARAMS.out, &Self::PARAMS.cns, &Self::PARAMS.inp)
     }
 

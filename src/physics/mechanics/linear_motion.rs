@@ -9,3 +9,6 @@
 //!
 
 pub mod const_accel;
+
+#[cfg(test)]
+mod tests;
