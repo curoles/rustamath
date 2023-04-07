@@ -11,6 +11,7 @@
 use rustamath_mks::MksUnit;
 
 pub mod figure;
+pub mod function;
 pub mod mechanics;
 
 mod equations;

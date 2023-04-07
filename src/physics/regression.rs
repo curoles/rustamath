@@ -37,6 +37,8 @@ pub fn find_equation(
         eqs.push((*id, fitness(*id, inputs, outputs)));
     }
 
+    eqs.sort_unstable_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+
     eqs
 }
 
@@ -55,15 +57,19 @@ pub fn fitness(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
 {
     let equation_builder = &EQUATIONS[id];
     let (out_params, cns_params, inp_params) = (equation_builder.params)();
-    let (nr_out_params, _nr_cns_params, nr_inp_params) = (out_params.len(), cns_params.len(), inp_params.len());
+    let (nr_out_params, nr_cns_params, nr_inp_params) = (out_params.len(), cns_params.len(), inp_params.len());
 
     let nr_measurements = inputs.len() / nr_inp_params;
     assert_eq!(outputs.len() / nr_out_params, nr_measurements);
 
-    let equation_constants: Vec<f64> = Vec::new();
-    //FIXME constants
+    let mut equation_constants: Vec<f64> = Vec::new();
+    equation_constants.resize(nr_cns_params, 1.0);
 
     let mut equation = (equation_builder.new)(&equation_constants);
+
+    if nr_cns_params > 0 {
+        //find_equation_parameters
+    }
 
     let mut predictions: Vec<f64> = Vec::with_capacity(outputs.len());
 
@@ -89,17 +95,63 @@ pub fn fitness(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
     chi2
 }
 
+// cargo test --lib test_circle_vs_square -- --nocapture
 #[cfg(test)]
 #[test]
 fn test_circle_vs_square() {
-    // cargo test --lib test_circle_vs_square -- --nocapture
-    //use rustamath_mks::*;
-    use crate::physics::{find_equation, EQUATIONS};
+    use crate::physics::*;
 
+    println!("\nDo 3 -> 18 which is close to circle perimeter 2*3.14*3\n");
     let eqs = find_equation(&[DISTANCE_UNIT], &[DISTANCE_UNIT], &[3.0], &[18.0]);
 
     for (i, eq) in eqs.iter().enumerate() {
         let equation_info = &EQUATIONS[eq.0];
-        println!("#{}: fit={} {}", i+1, eq.1, equation_info.desc);
+        println!("#{}: fit = {:8.2} {}", i+1, eq.1, equation_info.desc);
     }
+
+    let eq_index = get_equation_by_typeid(figure::circle::CirclePerimeter::params).unwrap();
+    assert_eq!(eq_index, eqs[0].0);
+
+    println!("\nNext do 3 -> 12.1 which is close to square perimeter 3*4\n");
+    let eqs = find_equation(&[DISTANCE_UNIT], &[DISTANCE_UNIT], &[3.0], &[12.1]);
+
+    for (i, eq) in eqs.iter().enumerate() {
+        let equation_info = &EQUATIONS[eq.0];
+        println!("#{}: fit = {:8.2} {}", i+1, eq.1, equation_info.desc);
+    }
+
+    let eq_index = get_equation_by_typeid(figure::rectangle::SquarePerimeter::params).unwrap();
+    assert_eq!(eq_index, eqs[0].0);
+}
+
+// cargo test --lib test_sine_vs_square -- --nocapture
+#[cfg(test)]
+#[test]
+fn test_sine_vs_square() {
+    use crate::physics::*;
+
+    let inputs = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+    let outputs = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+
+    //println!("\nDo 3 -> 18 which is close to circle perimeter 2*3.14*3\n");
+    let eqs = find_equation(&[SCALAR_UNIT], &[SCALAR_UNIT], &inputs, &outputs);
+
+    for (i, eq) in eqs.iter().enumerate() {
+        let equation_info = &EQUATIONS[eq.0];
+        println!("#{}: fit = {:8.2} {}", i+1, eq.1, equation_info.desc);
+    }
+/*
+    let eq_index = get_equation_by_typeid(figure::circle::CirclePerimeter::params).unwrap();
+    assert_eq!(eq_index, eqs[0].0);
+
+    println!("\nNext do 3 -> 12.1 which is close to square perimeter 3*4\n");
+    let eqs = find_equation(&[DISTANCE_UNIT], &[DISTANCE_UNIT], &[3.0], &[12.1]);
+
+    for (i, eq) in eqs.iter().enumerate() {
+        let equation_info = &EQUATIONS[eq.0];
+        println!("#{}: fit = {:8.2} {}", i+1, eq.1, equation_info.desc);
+    }
+
+    let eq_index = get_equation_by_typeid(figure::rectangle::SquarePerimeter::params).unwrap();
+    assert_eq!(eq_index, eqs[0].0);*/
 }
