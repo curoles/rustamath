@@ -29,12 +29,28 @@ pub fn find_equation(
     outputs: &[f64]
 ) -> Vec<(usize, f64)>
 {
+    use std::thread;
+
     let ids: Vec<usize> = find_equation_by_units(unit_inputs, unit_outputs);
 
     let mut eqs: Vec<(usize, f64)> = Vec::new();
+    let mut ths = Vec::new();
 
     for id in ids.iter() {
-        eqs.push((*id, fitness(*id, inputs, outputs)));
+        let id = *id;
+        let mut inputs_copy = Vec::<f64>::with_capacity(inputs.len());//TODO shall I use scoped threads?
+        inputs_copy.extend_from_slice(inputs);
+        let mut outputs_copy = Vec::<f64>::with_capacity(outputs.len());
+        outputs_copy.extend_from_slice(outputs);
+        let th = thread::spawn(move || {
+            (id, goodness_of_fit(id, &inputs_copy, &outputs_copy))
+        });
+        ths.push(th);
+    }
+
+    for th in ths {
+        let id_with_fit = th.join().unwrap();
+        eqs.push(id_with_fit);
     }
 
     eqs.sort_unstable_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
@@ -42,18 +58,19 @@ pub fn find_equation(
     eqs
 }
 
-/// Fitting the data using Chi-squared minimization.
+/// Return Reduced χ² Chi-squared goodness-of_fit value.
 ///
-/// Return (χ²/nr_total), the fit is reasonably good when is of order 1.0
+/// Return (χ²/degree_freedom), the fit is reasonably good when it is of order 1.0.
 ///
-/// χ² = ∑ ((Measureᵢ -fᵢ)/sigmaᵢ)²
-/// where Measureᵢ are individual measurements;
+/// See [Reduced Chi-squared statistics](https://en.wikipedia.org/wiki/Reduced_chi-squared_statistic).
+///
+/// χ² = ∑ ((Oᵢ - fᵢ)/sigmaᵢ)²
+/// where Oᵢ are individual observed values (measurements);
 /// fᵢ(params) is predicted value of the model
 /// with M parameters which are set to some reasonable trial value.
 ///
-/// The fit is reasonably good when (χ²/nr_total) is of order 1.0.
 ///
-pub fn fitness(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
+pub fn goodness_of_fit(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
 {
     let equation_builder = &EQUATIONS[id];
     let (out_params, cns_params, inp_params) = (equation_builder.params)();
@@ -69,6 +86,7 @@ pub fn fitness(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
 
     if nr_cns_params > 0 {
         //find_equation_parameters
+        //fit_data
     }
 
     let mut predictions: Vec<f64> = Vec::with_capacity(outputs.len());
@@ -80,20 +98,48 @@ pub fn fitness(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
         predictions.append(&mut prediction);
     }
 
+    assert!(nr_out_params == 1);//FIXME !!! XXX !!!
+
     let mut chi2: f64 = 0.0_f64;
+
     for i in 0..nr_measurements {
         let output_start_index = i * nr_out_params;
         //let output_end_index = output_start_index + nr_out_params;
         for j in 0..nr_out_params {
             let diff = outputs[output_start_index + j] - predictions[output_start_index + j];
-            chi2 += diff * diff;
+            chi2 += diff * diff;//FIXME divide by sigma2
         }
     }
 
-    chi2 /= nr_measurements as f64;
+    let degrees_of_freedom = if nr_measurements > nr_cns_params { nr_measurements - nr_cns_params } else { 1 };
+
+    chi2 /= degrees_of_freedom as f64;
 
     chi2
 }
+
+/* /// [Variance](https://en.wikipedia.org/wiki/Variance)
+fn variance(xs: &[f64]) -> f64 {
+    let mut u = 0.0;
+    let mut sigma = 0.0;
+
+    for x in xs {
+        u += x;
+        sigma += x * x;
+    }
+
+    sigma /= xs.len() as f64;
+    u /= xs.len() as f64;
+
+    sigma - u * u
+}*/
+
+/* /// Fitting the data changing const parameters using Chi-squared minimization.
+///
+/// [Dos and donts of reduced chi-squared](https://arxiv.org/pdf/1012.3754.pdf)
+fn fit_data() {
+    //
+}*/
 
 // cargo test --lib test_circle_vs_square -- --nocapture
 #[cfg(test)]
