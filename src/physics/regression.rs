@@ -34,18 +34,59 @@ pub fn find_equation(
     let mut eqs: Vec<(usize, f64)> = Vec::new();
 
     for id in ids.iter() {
-        //let equation_info = &EQUATIONS[*id];
-        //println!("#{}: {}", *id, equation_info.desc);
         eqs.push((*id, fitness(*id, inputs, outputs)));
     }
 
     eqs
 }
 
-fn fitness(id: usize, _inputs: &[f64], _outputs: &[f64]) -> f64
+/// Fitting the data using Chi-squared minimization.
+///
+/// Return (χ²/nr_total), the fit is reasonably good when is of order 1.0
+///
+/// χ² = ∑ ((Measureᵢ -fᵢ)/sigmaᵢ)²
+/// where Measureᵢ are individual measurements;
+/// fᵢ(params) is predicted value of the model
+/// with M parameters which are set to some reasonable trial value.
+///
+/// The fit is reasonably good when (χ²/nr_total) is of order 1.0.
+///
+pub fn fitness(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
 {
-    let _equation_info = &EQUATIONS[id];
-    1.1
+    let equation_builder = &EQUATIONS[id];
+    let (out_params, cns_params, inp_params) = (equation_builder.params)();
+    let (nr_out_params, _nr_cns_params, nr_inp_params) = (out_params.len(), cns_params.len(), inp_params.len());
+
+    let nr_measurements = inputs.len() / nr_inp_params;
+    assert_eq!(outputs.len() / nr_out_params, nr_measurements);
+
+    let equation_constants: Vec<f64> = Vec::new();
+    //FIXME constants
+
+    let mut equation = (equation_builder.new)(&equation_constants);
+
+    let mut predictions: Vec<f64> = Vec::with_capacity(outputs.len());
+
+    for i in 0..nr_measurements {
+        let input_start_index = i * nr_inp_params;
+        let input_end_index = input_start_index + nr_inp_params;
+        let mut prediction = equation.run(&inputs[input_start_index..input_end_index]);
+        predictions.append(&mut prediction);
+    }
+
+    let mut chi2: f64 = 0.0_f64;
+    for i in 0..nr_measurements {
+        let output_start_index = i * nr_out_params;
+        //let output_end_index = output_start_index + nr_out_params;
+        for j in 0..nr_out_params {
+            let diff = outputs[output_start_index + j] - predictions[output_start_index + j];
+            chi2 += diff * diff;
+        }
+    }
+
+    chi2 /= nr_measurements as f64;
+
+    chi2
 }
 
 #[cfg(test)]
