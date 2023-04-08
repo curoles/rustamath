@@ -8,6 +8,8 @@
 use rustamath_mks::*;
 use super::{find_equation_by_units, EQUATIONS};
 
+mod fit;
+
 /// Get list of equations that sutisfy specified input/output unit types
 /// and fit to measured input/output values.
 ///
@@ -34,24 +36,22 @@ pub fn find_equation(
     let ids: Vec<usize> = find_equation_by_units(unit_inputs, unit_outputs);
 
     let mut eqs: Vec<(usize, f64)> = Vec::new();
-    let mut ths = Vec::new();
 
-    for id in ids.iter() {
-        let id = *id;
-        let mut inputs_copy = Vec::<f64>::with_capacity(inputs.len());//TODO shall I use scoped threads?
-        inputs_copy.extend_from_slice(inputs);
-        let mut outputs_copy = Vec::<f64>::with_capacity(outputs.len());
-        outputs_copy.extend_from_slice(outputs);
-        let th = thread::spawn(move || {
-            (id, goodness_of_fit(id, &inputs_copy, &outputs_copy))
-        });
-        ths.push(th);
-    }
+    thread::scope(|thread_scope| {
+        let mut ths = Vec::new();
 
-    for th in ths {
-        let id_with_fit = th.join().unwrap();
-        eqs.push(id_with_fit);
-    }
+        for id in ids.iter() {
+            let th = thread_scope.spawn(move || {
+                (*id, goodness_of_fit(*id, inputs, outputs, &[]))
+            });
+            ths.push(th);
+        }
+
+        for th in ths {
+            let id_with_fit = th.join().unwrap();
+            eqs.push(id_with_fit);
+        }
+    });
 
     eqs.sort_unstable_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
 
@@ -69,12 +69,25 @@ pub fn find_equation(
 /// fᵢ(params) is predicted value of the model
 /// with M parameters which are set to some reasonable trial value.
 ///
+/// Note: when `ssigmas` input array lenght is 0, we **ASSUME** unweighted data when all sigma(i)=1.
 ///
-pub fn goodness_of_fit(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
+/// William H. Press - Numerical recipes, the art of scientific computing.
+/// Cambridge University Press (2007):
+/// In some cases the uncertainties associated with a set of measurements are not
+/// known in advance, and considerations related to χ² fitting are used to derive a value for sigma.
+/// If we assume that all measurements have the same standard deviation, sigma(i)=sigma,
+/// and that the model does fit well, then we can proceed by first assigning an arbitrary
+/// constant sigma to all points, next fitting for the model parameters by minimizing χ²
+/// and finally recomputing sigma^2=∑(Oᵢ - fᵢ)²/(N-M).
+/// !!! Obviously, this approach prohibits an independent assessment of goodness-of-fit. !!!
+///
+pub fn goodness_of_fit(id: usize, inputs: &[f64], outputs: &[f64], ssigmas: &[f64]) -> f64
 {
     let equation_builder = &EQUATIONS[id];
     let (out_params, cns_params, inp_params) = (equation_builder.params)();
     let (nr_out_params, nr_cns_params, nr_inp_params) = (out_params.len(), cns_params.len(), inp_params.len());
+
+    assert!(ssigmas.is_empty() || ssigmas.len() == outputs.len());
 
     let nr_measurements = inputs.len() / nr_inp_params;
     assert_eq!(outputs.len() / nr_out_params, nr_measurements);
@@ -84,9 +97,9 @@ pub fn goodness_of_fit(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
 
     let mut equation = (equation_builder.new)(&equation_constants);
 
-    if nr_cns_params > 0 {
-        //find_equation_parameters
-        //fit_data
+    if nr_cns_params > 0 && nr_measurements >= nr_cns_params {
+        // Find constant parameters of the equation
+        fit::fit(&mut *equation);
     }
 
     let mut predictions: Vec<f64> = Vec::with_capacity(outputs.len());
@@ -107,45 +120,28 @@ pub fn goodness_of_fit(id: usize, inputs: &[f64], outputs: &[f64]) -> f64
         //let output_end_index = output_start_index + nr_out_params;
         for j in 0..nr_out_params {
             let diff = outputs[output_start_index + j] - predictions[output_start_index + j];
-            chi2 += diff * diff;//FIXME divide by sigma2
+            let sigma = if ssigmas.is_empty() { 1.0 } else { ssigmas[output_start_index + j] };
+            chi2 += (diff * diff) / (sigma * sigma);
         }
     }
 
     let degrees_of_freedom = if nr_measurements > nr_cns_params { nr_measurements - nr_cns_params } else { 1 };
 
+    // Reduced chi2
     chi2 /= degrees_of_freedom as f64;
 
     chi2
 }
-
-/* /// [Variance](https://en.wikipedia.org/wiki/Variance)
-fn variance(xs: &[f64]) -> f64 {
-    let mut u = 0.0;
-    let mut sigma = 0.0;
-
-    for x in xs {
-        u += x;
-        sigma += x * x;
-    }
-
-    sigma /= xs.len() as f64;
-    u /= xs.len() as f64;
-
-    sigma - u * u
-}*/
-
-/* /// Fitting the data changing const parameters using Chi-squared minimization.
-///
-/// [Dos and donts of reduced chi-squared](https://arxiv.org/pdf/1012.3754.pdf)
-fn fit_data() {
-    //
-}*/
 
 // cargo test --lib test_circle_vs_square -- --nocapture
 #[cfg(test)]
 #[test]
 fn test_circle_vs_square() {
     use crate::physics::*;
+
+    if let Ok(nr_cores) = std::thread::available_parallelism() {
+        println!("Number of available CPU cores for parallel execution: {}", nr_cores);
+    }
 
     println!("\nDo 3 -> 18 which is close to circle perimeter 2*3.14*3\n");
     let eqs = find_equation(&[DISTANCE_UNIT], &[DISTANCE_UNIT], &[3.0], &[18.0]);
