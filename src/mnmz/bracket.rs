@@ -10,10 +10,26 @@
 //!
 use std::mem;
 
-type FunToMnmz = fn (input: f64) -> f64;
+/// Type of functions we deal with.
+pub type FunToMnmz = fn (input: f64) -> f64;
 
 /// Bracketing points for a minimum.
-pub struct BracketRes((f64, f64), (f64, f64), (f64, f64), usize);
+pub struct BracketRes {
+    /// ax
+    pub a:f64,
+    /// midpoint
+    pub b:f64,
+    /// cx
+    pub c:f64,
+    /// f(a)
+    pub fa:f64,
+    /// f(b)
+    pub fb: f64,
+    /// f(c)
+    pub fc: f64,
+    /// Number iteratations it took to find the bracket.
+    pub nr_iterations: usize
+}
 
 /// Default ratio by which successive intervals are magnified
 const GOLD: f64 = 1.618034_f64;
@@ -105,15 +121,19 @@ pub fn find_bracket(fun: FunToMnmz, a: f64, b: f64) -> BracketRes {
         nr_iterations += 1;
     }
 
-    BracketRes((a, fa), (b, fb), (c, fc), nr_iterations)
+    BracketRes{a, b, c, fa, fb, fc, nr_iterations}
 }
 
-/*#[inline] fn shft2(a: &mut f64, b: &mut f64, c: f64) {
+/// Helper
+#[inline]
+pub fn shft2(a: &mut f64, b: &mut f64, c: f64) {
     *a = *b;
     *b = c;
-}*/
+}
 
-#[inline] fn shft3(a: &mut f64, b: &mut f64, c: &mut f64, d: f64) {
+/// Helper
+#[inline]
+pub fn shft3(a: &mut f64, b: &mut f64, c: &mut f64, d: f64) {
     *a = *b;
     *b = *c;
     *c = d;
@@ -138,11 +158,11 @@ fn test_poly2() {
         let bracket = find_bracket(poly2, range.0, range.1);
 
         println!("Bracket: [{:6.2} < {:6.2} < {:6.2}] with values [{:6.2} < {:6.2} < {:6.2}] iterations:{}",
-            bracket.0.0, bracket.1.0, bracket.2.0,
-            bracket.0.1, bracket.1.1, bracket.2.1,
-            bracket.3
+            bracket.a, bracket.b, bracket.c,
+            bracket.fa, bracket.fb, bracket.fc,
+            bracket.nr_iterations
         );
 
-        assert!(bracket.0.1 > bracket.1.1 && bracket.1.1 < bracket.2.1);
+        assert!(bracket.fa > bracket.fb && bracket.fb < bracket.fc);
     }
 }
