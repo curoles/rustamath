@@ -13,7 +13,7 @@ use std::mem;
 type FunToMnmz = fn (input: f64) -> f64;
 
 /// Bracketing points for a minimum.
-pub struct BracketRes((f64, f64), (f64, f64), (f64, f64));
+pub struct BracketRes((f64, f64), (f64, f64), (f64, f64), usize);
 
 /// Default ratio by which successive intervals are magnified
 const GOLD: f64 = 1.618034_f64;
@@ -33,7 +33,7 @@ const TINY: f64 = 1.0e-20_f64;
 /// and returns new points ax, bx, cx that bracket a minimum of the function. Also returned
 /// are the function values at the three points, fa, fb, and fc.
 ///
-pub fn bracket(fun: FunToMnmz, a: f64, b: f64) -> BracketRes {
+pub fn find_bracket(fun: FunToMnmz, a: f64, b: f64) -> BracketRes {
     let mut a = a;
     let mut b = b;
     let mut fa = fun(a);
@@ -50,6 +50,7 @@ pub fn bracket(fun: FunToMnmz, a: f64, b: f64) -> BracketRes {
     let mut fc = fun(c);
 
     let mut fu: f64;
+    let mut nr_iterations: usize = 1;
 
     while fb > fc { // Keep returning here until we bracket.
         // Compute u by parabolic extrapolation from a, b, c.
@@ -100,9 +101,11 @@ pub fn bracket(fun: FunToMnmz, a: f64, b: f64) -> BracketRes {
         // Eliminate oldest point and continue.
         shft3(&mut a, &mut b, &mut c, u);
         shft3(&mut fa, &mut fb, &mut fc, fu);
+
+        nr_iterations += 1;
     }
 
-    BracketRes((a, fa), (b, fb), (c, fc))
+    BracketRes((a, fa), (b, fb), (c, fc), nr_iterations)
 }
 
 /*#[inline] fn shft2(a: &mut f64, b: &mut f64, c: f64) {
@@ -121,3 +124,25 @@ pub fn bracket(fun: FunToMnmz, a: f64, b: f64) -> BracketRes {
     *b = e;
     *c = f;
 }*/
+
+#[cfg(test)]
+#[test]
+fn test_poly2() {
+    // Roots 1.0 and 2.0, minimum at 1.5.
+    let poly2 = |x: f64| (x-1.0)*(x-2.0);
+
+    let ranges = vec![(10.0, 20.0), (20.0, 10.0), (-10.0, 0.0),
+        (-2000.0, -1000.0), (-10_000.0, 30_000.0), (0.0001, 0.0002), (-0.00001, 1.4999)];
+
+    for range in ranges {
+        let bracket = find_bracket(poly2, range.0, range.1);
+
+        println!("Bracket: [{:6.2} < {:6.2} < {:6.2}] with values [{:6.2} < {:6.2} < {:6.2}] iterations:{}",
+            bracket.0.0, bracket.1.0, bracket.2.0,
+            bracket.0.1, bracket.1.1, bracket.2.1,
+            bracket.3
+        );
+
+        assert!(bracket.0.1 > bracket.1.1 && bracket.1.1 < bracket.2.1);
+    }
+}
