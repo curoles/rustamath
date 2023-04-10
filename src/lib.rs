@@ -14,7 +14,6 @@ pub mod roots;
 pub mod polynomial;
 pub mod random;
 pub mod la;
-pub mod mnmz;
 
 /// i am foo
 pub fn foo(n: i32) -> i32 {
