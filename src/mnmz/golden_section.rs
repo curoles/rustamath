@@ -10,8 +10,6 @@
 //!
 use super::bracket::{FunToMnmz, find_bracket, shft3, shft2};
 
-//type FunToMnmz = fn (input: f64) -> f64;
-
 /// See book "Numerical recipes, the art of scientific computing."
 /// sqrt(f64 precision 10^16)
 const MIN_TOLERANCE: f64 = 3.0e-8_f64;
